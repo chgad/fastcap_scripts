@@ -22,9 +22,10 @@ class GeomFace:
     0 -------- 3
 
     """
-    def __init__(self, vertice_cnt, corners):
+    def __init__(self, vertice_cnt, corners, is_fast_cap=True):
         self.corners = corners
         self.vertice_cnt = vertice_cnt
+        self.is_fast_cap = is_fast_cap
 
         self.validate()
 
@@ -38,6 +39,9 @@ class GeomFace:
             raise ValueError("Not all corners provided are a 3D vector.")
         if list(map(lambda x: isinstance(x, np.ndarray), self.corners)).count(False):
             raise ValueError("Not all corners provided are numpy arrays")
+        if self.is_fast_cap:
+            if not self.vertice_cnt in (3, 4):
+                raise ValueError("For FastCap faces (is_fast_cap=True) only triangles and rectangles are allowed.")
 
     def __add__(self, other):
         if not isinstance(other, np.ndarray):
@@ -63,20 +67,31 @@ class GeomFace:
         """
         A geometric face with {vertice_cnt} vertices\n
         with following corners :\n""".format(vertice_cnt=self.vertice_cnt)
-        n=1
+        n = 1
         for corner in self.corners:
             to_print += "\t \t{n}. ({}, {}, {})\n".format(*corner, n=n)
             n += 1
 
         return to_print
 
+    def prep_export_string(self, conductor_name=1):
+        shape_indicator = "T"
+        base_string = "{shape}  {name}  {} {} {}  {} {} {}  {} {} {}\n"
+        if self.vertice_cnt == 4:
+            shape_indicator = "Q"
+            base_string = "{shape}  {name}  {} {} {}  {} {} {}  {} {} {}  {} {} {}\n"
+
+        return base_string.format(*self.corners.flatten(), shape=shape_indicator, name=conductor_name)
+
+
 # Test for Geometric faces
-# g = GeomFace(3, np.array([[0, 0, 0], [0, 1, 0], [1, 0, 0]]))
-#
+# g = GeomFace(3, np.array([[0.0, 0.0, 0.0], [0.0, 1.0, 0.0], [1.0, 0.0, 0.0]]))
+
 # g = g + np.array([1, 0, 0])
 # p = g.copy() - np.array([1, 0, 0])
 # print(g)
 # print(p)
+# print(p.prep_export_string())
 
 
 class ElectrodeStructure:
@@ -142,8 +157,26 @@ class ElectrodeStructure:
         self.set_bottom_face()
         self.set_top_face()
 
+    def prep_export_string(self,cond_name=1):
+        export_string = ""
+        for face in [getattr(self, x) for x in self.__dict__ if x.endswith("face") and getattr(self, x)]:
+            export_string += face.prep_export_string()
+
+        return export_string
+
+    def export_to_file(self,file_name):
+        with open(file_name, "a") as f:
+            f.write(self.prep_export_string())
+            f.close()
+
+
 # Test the Electrode Structure
-# elec = ElectrodeStructure(length=7.0, width=1.5, height=3.7)
+
+
+elec = ElectrodeStructure(length=7.0, width=1.5, height=3.7)
+print(elec.prep_export_string())
+elec.export_to_file("fast_cap_test.txt")
+
 #
 # print("Bottom and top Face")
 # print(elec.bottom_face)
