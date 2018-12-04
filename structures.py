@@ -5,145 +5,7 @@ import copy as cp
 
 import numpy as np
 
-
-class AttributeTranslation:
-    """
-    Main class to provide Translation operation in a 3D real vector space with euklidian metric for geometrical faces.
-
-    """
-    def __add__(self, other, attr="corners"):
-        if not isinstance(other, np.ndarray):
-            raise ValueError("__add__ is a translation operation. A Face can only be added with a 3D vectore")
-        for vector in getattr(self, attr):
-            vector += other
-
-        return self
-
-    def __sub__(self, other, attr="corners"):
-        if not isinstance(other, np.ndarray):
-            raise ValueError("__sub__ is a translation operation. A Face can only be added with a 3D vectore")
-        for vector in getattr(self, attr):
-            vector -= other
-
-        return self
-
-
-class Copy:
-
-    def copy(self):
-        return cp.deepcopy(self)
-
-
-class FaceRepresentation:
-
-    def __init__(self):
-        self.vertice_cnt = 0
-        self.corners = []
-
-    def __str__(self):
-        to_print = \
-            """
-            A geometric face with {vertice_cnt} vertices\n
-            with following corners :\n""".format(vertice_cnt=self.vertice_cnt)
-        n = 1
-        for corner in self.corners:
-            to_print += "\t \t{n}. ({}, {}, {})\n".format(*corner, n=n)
-            n += 1
-
-        return to_print
-
-
-class GeomFaceUtilities(AttributeTranslation, Copy, FaceRepresentation ):
-    pass
-
-
-class GeomFace(GeomFaceUtilities):
-    """
-    A Class representing a 2D geometrical Object which embodies the Face of a
-    3D Objekt.
-    We require that one of the corners is located at 0.0, 0.0, 0.0.
-    The point have to be a 3D vectorlike shape (numpy array with length 3).
-
-    The corners will be counted as follows (example quadrat) where the corners will be enumerated:
-
-    1 -------- 2
-    |          |
-    |          |
-    |          |
-    |          |
-    0 -------- 3
-
-    """
-    def __init__(self, vertice_cnt, corners, is_fast_cap=True):
-        super(GeomFace, self).__init__()
-        self.corners = corners
-        self.vertice_cnt = vertice_cnt
-        self.is_fast_cap = is_fast_cap
-
-        self.validate()
-
-    def validate(self):
-        if not self.vertice_cnt == len(self.corners):
-            raise ValueError(
-                "Not enough corner points provided for a polygon with {n} vertices".format(n=self.vertice_cnt))
-        if not (np.array([0.0, 0.0, 0.0]) in self.corners):
-            raise ValueError(" The Point (0.0, 0.0, 0.0) is not included in the variable corners.")
-        if list(map(lambda x: len(x) == 3, self.corners)).count(False):
-            raise ValueError("Not all corners provided are a 3D vector.")
-        if list(map(lambda x: isinstance(x, np.ndarray), self.corners)).count(False):
-            raise ValueError("Not all corners provided are numpy arrays")
-        if self.is_fast_cap:
-            if self.vertice_cnt not in (3, 4):
-                raise ValueError("For FastCap faces (is_fast_cap=True) only triangles and rectangles are allowed.")
-
-    def prep_export_string(self, conductor_name=1):
-        shape_indicator = "T"
-        base_string = "{shape}  {name}  {} {} {}  {} {} {}  {} {} {}\n"
-        if self.vertice_cnt == 4:
-            shape_indicator = "Q"
-            base_string = "{shape}  {name}  {} {} {}  {} {} {}  {} {} {}  {} {} {}\n"
-
-        return base_string.format(*self.corners.flatten(), shape=shape_indicator, name=conductor_name)
-
-# Test for Geometric faces
-# g = GeomFace(3, np.array([[0.0, 0.0, 0.0], [0.0, 1.0, 0.0], [1.0, 0.0, 0.0]]))
-#
-# l = g.copy() + np.array([1, 0, 0])
-# p = l - np.array([1, 0, 0])
-# print("g", g)
-# print("p", p)
-# print("p == g", p==g)
-# print(p.prep_export_string())
-
-
-class GeomFaceList:
-    """
-    A Container for multiple Faces.
-
-    """
-    def __init__(self, faces):
-        self.faces = faces
-
-        self.validate()
-
-    def validate(self):
-        if not isinstance(self.faces, list):
-            raise ValueError("The profided Value for 'faces' is not a list.")
-
-        for face in self.faces:
-            if not isinstance(face, GeomFace):
-                raise ValueError("The values of 'faces' aren't GeomFace instances.")
-
-    def append(self, face):
-        if not isinstance(face, GeomFace):
-            raise ValueError("The provided face is not a GeomFace instances.")
-        self.faces.append(face)
-
-    def prep_export_string(self):
-        export_string = ""
-        for face in self.faces:
-            export_string += face.prep_export_string()
-        return export_string
+from .faces import GeomFace, GeomFaceList
 
 
 class Cuboid:
@@ -223,7 +85,8 @@ class Cuboid:
         self.set_top_face()
 
     def get_all_faces(self):
-        return [getattr(self, face) for face in self.__dict__ if face.endswith("face") and getattr(self, face)]
+        return GeomFaceList([getattr(self, face) for face in self.__dict__
+                             if face.endswith("face") and getattr(self, face)])
 
     def copy(self):
         return cp.deepcopy(self)
@@ -231,30 +94,29 @@ class Cuboid:
     def __add__(self, other):
         if not isinstance(other, np.ndarray):
             raise ValueError("__add__ is a translation operation. A Face can only be added with a 3D vectore")
-        for face in self.all_faces:
-            face += other
+        self.all_faces += other
 
         return self
 
     def __sub__(self, other):
         if not isinstance(other, np.ndarray):
             raise ValueError("__sub__ is a translation operation. A Face can only be added with a 3D vectore")
-        for face in self.all_faces:
-            face -= other
+        self.all_faces -= other
 
         return self
 
 
-class ElectrodeStructure(Cuboid):
+class FastCapCuboid(Cuboid):
+
     def __init__(self, omit_faces=[], *args, **kwargs):
-        super(ElectrodeStructure, self).__init__(*args, **kwargs)
+        super(FastCapCuboid, self).__init__(*args, **kwargs)
         self.omit_faces = omit_faces
 
     def prep_export_string(self,cond_name=1):
         export_string = ""
-        faces_to_export = [face for face in self.all_faces if not face in self.omit_faces]
+        faces_to_export = [face for face in self.all_faces if face not in self.omit_faces]
         for face in faces_to_export:
-            export_string += face.prep_export_string()
+            export_string += face.prep_export_string(cond_name=cond_name)
 
         return export_string
 
@@ -263,6 +125,9 @@ class ElectrodeStructure(Cuboid):
             f.write(self.prep_export_string())
             f.close()
 
+
+class ElectrodeStructure(FastCapCuboid):
+    pass
 
 # Test the Electrode Structure
 
