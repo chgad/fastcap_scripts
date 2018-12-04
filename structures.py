@@ -8,7 +8,7 @@ import numpy as np
 
 class GeomFace:
     """
-    A Class representing a 2D geomatrical Object which embodies the Face of a
+    A Class representing a 2D geometrical Object which embodies the Face of a
     3D Objekt.
     We require that one of the corners is located at 0.0, 0.0, 0.0.
     The point have to be a 3D vectorlike shape (numpy array with length 3).
@@ -41,7 +41,7 @@ class GeomFace:
         if list(map(lambda x: isinstance(x, np.ndarray), self.corners)).count(False):
             raise ValueError("Not all corners provided are numpy arrays")
         if self.is_fast_cap:
-            if not self.vertice_cnt in (3, 4):
+            if self.vertice_cnt not in (3, 4):
                 raise ValueError("For FastCap faces (is_fast_cap=True) only triangles and rectangles are allowed.")
 
     def __add__(self, other):
@@ -158,7 +158,11 @@ class Cuboid:
         self.left_face = GeomFace(4, np.array([zero, one, two, three]))
 
     def set_right_face(self):
-        self.right_face = self.left_face.copy() + np.array([self.width, 0.0, 0.0])
+        zero = np.array([self.width, 0.0, 0.0])
+        one = np.array([self.width, self.length, 0.0])
+        two = np.array([self.width, self.length, self.height])
+        three = np.array([self.width, 0.0, self.height])
+        self.right_face = GeomFace(4, np.array([zero, one, two, three]))
 
     def set_front_face(self):
         zero = np.array([0.0, 0.0, 0.0])
@@ -168,7 +172,11 @@ class Cuboid:
         self.front_face = GeomFace(4, np.array([zero, one, two, three]))
 
     def set_back_face(self):
-        self.back_face = self.front_face.copy() + np.array([0.0, self.length, 0.0])
+        zero = np.array([0.0, self.length, 0.0])
+        one = np.array([0.0, self.length, self.height])
+        two = np.array([self.width, self.length, self.height])
+        three = np.array([self.width, self.length, 0.0])
+        self.back_face = GeomFace(4, np.array([zero, one, two, three]))
 
     def set_bottom_face(self):
         zero = np.array([0.0, 0.0, 0.0])
@@ -178,7 +186,11 @@ class Cuboid:
         self.bottom_face = GeomFace(4, np.array([zero, one, two, three]))
 
     def set_top_face(self):
-        self.top_face = self.bottom_face.copy() + np.array([0.0, 0.0, self.height])
+        zero = np.array([0.0, 0.0, self.height])
+        one = np.array([0.0, self.length, self.height])
+        two = np.array([self.width, self.length, self.height])
+        three = np.array([self.width, 0.0, self.height])
+        self.top_face = GeomFace(4, np.array([zero, one, two, three]))
 
     def setup_all_faces(self):
         self.set_front_face()
