@@ -6,7 +6,58 @@ import copy as cp
 import numpy as np
 
 
-class GeomFace:
+class AttributeTranslation:
+    """
+    Main class to provide Translation operation in a 3D real vector space with euklidian metric for geometrical faces.
+
+    """
+    def __add__(self, other, attr="corners"):
+        if not isinstance(other, np.ndarray):
+            raise ValueError("__add__ is a translation operation. A Face can only be added with a 3D vectore")
+        for vector in getattr(self, attr):
+            vector += other
+
+        return self
+
+    def __sub__(self, other, attr="corners"):
+        if not isinstance(other, np.ndarray):
+            raise ValueError("__sub__ is a translation operation. A Face can only be added with a 3D vectore")
+        for vector in getattr(self, attr):
+            vector -= other
+
+        return self
+
+
+class Copy:
+
+    def copy(self):
+        return cp.deepcopy(self)
+
+
+class FaceRepresentation:
+
+    def __init__(self):
+        self.vertice_cnt = 0
+        self.corners = []
+
+    def __str__(self):
+        to_print = \
+            """
+            A geometric face with {vertice_cnt} vertices\n
+            with following corners :\n""".format(vertice_cnt=self.vertice_cnt)
+        n = 1
+        for corner in self.corners:
+            to_print += "\t \t{n}. ({}, {}, {})\n".format(*corner, n=n)
+            n += 1
+
+        return to_print
+
+
+class GeomFaceUtilities(AttributeTranslation, Copy, FaceRepresentation ):
+    pass
+
+
+class GeomFace(GeomFaceUtilities):
     """
     A Class representing a 2D geometrical Object which embodies the Face of a
     3D Objekt.
@@ -24,6 +75,7 @@ class GeomFace:
 
     """
     def __init__(self, vertice_cnt, corners, is_fast_cap=True):
+        super(GeomFace, self).__init__()
         self.corners = corners
         self.vertice_cnt = vertice_cnt
         self.is_fast_cap = is_fast_cap
@@ -44,37 +96,6 @@ class GeomFace:
             if self.vertice_cnt not in (3, 4):
                 raise ValueError("For FastCap faces (is_fast_cap=True) only triangles and rectangles are allowed.")
 
-    def __add__(self, other):
-        if not isinstance(other, np.ndarray):
-            raise ValueError("__add__ is a translation operation. A Face can only be added with a 3D vectore")
-        for vector in self.corners:
-            vector += other
-
-        return self
-
-    def __sub__(self, other):
-        if not isinstance(other, np.ndarray):
-            raise ValueError("__sub__ is a translation operation. A Face can only be added with a 3D vectore")
-        for vector in self.corners:
-            vector -= other
-
-        return self
-
-    def copy(self):
-        return cp.deepcopy(self)
-
-    def __str__(self):
-        to_print = \
-        """
-        A geometric face with {vertice_cnt} vertices\n
-        with following corners :\n""".format(vertice_cnt=self.vertice_cnt)
-        n = 1
-        for corner in self.corners:
-            to_print += "\t \t{n}. ({}, {}, {})\n".format(*corner, n=n)
-            n += 1
-
-        return to_print
-
     def prep_export_string(self, conductor_name=1):
         shape_indicator = "T"
         base_string = "{shape}  {name}  {} {} {}  {} {} {}  {} {} {}\n"
@@ -86,11 +107,12 @@ class GeomFace:
 
 # Test for Geometric faces
 # g = GeomFace(3, np.array([[0.0, 0.0, 0.0], [0.0, 1.0, 0.0], [1.0, 0.0, 0.0]]))
-
-# g = g + np.array([1, 0, 0])
-# p = g.copy() - np.array([1, 0, 0])
-# print(g)
-# print(p)
+#
+# l = g.copy() + np.array([1, 0, 0])
+# p = l - np.array([1, 0, 0])
+# print("g", g)
+# print("p", p)
+# print("p == g", p==g)
 # print(p.prep_export_string())
 
 
@@ -461,6 +483,6 @@ class IdtUpperStructure(IdtLowerStructure):
 
 
 # Test for IdtLowerStructure
-idt_upper = IdtUpperStructure(elec_length=20, elec_width=2, elec_sep=3, elec_cnt=10, base_length=5, height=7)
-
-idt_upper.export_to_file(cond_file_name="test_upper_cond_file.txt", diel_file_name="test_upper_diel_file.txt")
+# idt_upper = IdtUpperStructure(elec_length=20, elec_width=2, elec_sep=3, elec_cnt=10, base_length=5, height=7)
+#
+# idt_upper.export_to_file(cond_file_name="test_upper_cond_file.txt", diel_file_name="test_upper_diel_file.txt")
