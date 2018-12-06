@@ -119,17 +119,17 @@ class GeomFaceList(GeomFaceListUtilities):
 
         for face in self.faces:
             if not isinstance(face, GeomFace):
-                raise ValueError("The values of 'faces' aren't GeomFace instances.")
+                raise ValueError("The values of 'faces' aren't GeomFace instances, but {}.".format(face))
 
     def append(self, face):
         if not isinstance(face, GeomFace):
             raise ValueError("The provided face is not a GeomFace instances.")
         self.faces.append(face)
 
-    def prep_export_string(self):
+    def prep_export_string(self, cond_name=1):
         export_string = ""
         for face in self.faces:
-            export_string += face.prep_export_string()
+            export_string += face.prep_export_string(cond_name=cond_name)
         return export_string
 
     def __iter__(self):
@@ -139,7 +139,7 @@ class GeomFaceList(GeomFaceListUtilities):
         self.faces.__next__()
 
 # Test for Geometric faces
-g = GeomFace(3, np.array([[0.0, 0.0, 0.0], [0.0, 1.0, 0.0], [1.0, 0.0, 0.0]]))
+# g = GeomFace(3, np.array([[0.0, 0.0, 0.0], [0.0, 1.0, 0.0], [1.0, 0.0, 0.0]]))
 #
 # l = g.copy() + np.array([1, 0, 0])
 # p = l - np.array([1, 0, 0])
@@ -149,11 +149,17 @@ g = GeomFace(3, np.array([[0.0, 0.0, 0.0], [0.0, 1.0, 0.0], [1.0, 0.0, 0.0]]))
 # print(p.prep_export_string())
 
 # Test for Gemoetricface lists
-list_to_add = [g.copy() + np.array([n, 0.0, 0.0]) for n in range(3)]
+# list_to_add = [g.copy() + np.array([n, 0.0, 0.0]) for n in range(3)]
 #
-geom_list = GeomFaceList(list_to_add)
-for face in geom_list:
-    print(face)
+# geom_list = GeomFaceList(list_to_add)
+# print(*g)
+# for face in geom_list:
+#     print(face)
+
+# tilt = [*geom_list, g.copy() + np.array([1000.0, 0.0, 0.0])]
+#
+# for i in tilt:
+#     print(i)
 # other_geom_list = geom_list.copy() + np.array([1000.0, 0.0, 0.0])
 #
 # print(geom_list)

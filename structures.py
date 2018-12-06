@@ -5,7 +5,7 @@ import copy as cp
 
 import numpy as np
 
-from .faces import GeomFace, GeomFaceList
+from faces import GeomFace, GeomFaceList
 
 
 class Cuboid:
@@ -112,13 +112,40 @@ class FastCapCuboid(Cuboid):
         super(FastCapCuboid, self).__init__(*args, **kwargs)
         self.omit_faces = omit_faces
 
-    def prep_export_string(self,cond_name=1):
-        export_string = ""
-        faces_to_export = [face for face in self.all_faces if face not in self.omit_faces]
-        for face in faces_to_export:
-            export_string += face.prep_export_string(cond_name=cond_name)
+    def get_all_faces(self):
+        """
+        In Fast Cap we allow that one 'normal' Cuboid face is splitted into multiple faces, represented by
+        a GeomFaceList instance.
+        :return:
+        """
+        final_list = []
+        for attr in self.__dict__:
+            actual_attr = getattr(self, attr)
+            if attr.endswith("face") and actual_attr:
+                if isinstance(actual_attr, GeomFaceList):
+                    final_list = [*final_list, *actual_attr]
+                else:
+                    final_list.append(actual_attr)
 
-        return export_string
+        return GeomFaceList(final_list)
+
+    def fields_to_export(self):
+        """
+        In FastCap we allow certain faces to be omitted since the could be replaced by other structures faces.
+        """
+        final_list = []
+        for attr in self.__dict__:
+            actual_attr = getattr(self, attr)
+            if attr.endswith("face") and actual_attr and attr not in self.omit_faces:
+                if isinstance(actual_attr, GeomFaceList):
+                    final_list = [*final_list, *attr]
+                else:
+                    final_list.append(attr)
+
+        return GeomFaceList(final_list)
+
+    def prep_export_string(self,cond_name=1):
+        return self.fields_to_export().prep_export_string(cond_name=cond_name)
 
     def export_to_file(self,file_name):
         with open(file_name, "a") as f:
@@ -147,7 +174,7 @@ class ElectrodeStructure(FastCapCuboid):
 # print(elec.right_face)
 
 
-class LowerBaseStructure(Cuboid):
+class LowerBaseStructure(FastCapCuboid):
 
     """
     The BaseStructure will look like the followning scheme:
@@ -167,15 +194,13 @@ class LowerBaseStructure(Cuboid):
 
 
     """
-    def __init__(self, elec_width, elec_sep, elec_cnt, omit_faces=[],*args, **kwargs):
+    def __init__(self, elec_width, elec_sep, elec_cnt, *args, **kwargs):
 
         self.elec_width = elec_width    # elec distance in y-direction
         self.elec_sep = elec_sep        # distance between 2 Electrodes
         self.elec_cnt = elec_cnt        # number of electrodes
 
         super(LowerBaseStructure, self).__init__(*args, **kwargs)
-
-        self.omit_faces = omit_faces
 
     def set_back_face(self):
         zero = np.array([0.0, 0.0, 0.0])
@@ -189,16 +214,8 @@ class LowerBaseStructure(Cuboid):
 
         self.back_face = GeomFaceList(faces=faces_list)
 
-    def prep_export_string(self,cond_name=1):
-        export_string = ""
-        faces_to_export = [face for face in self.all_faces if not face in self.omit_faces]
-        for face in faces_to_export:
-            export_string += face.prep_export_string()
 
-        return export_string
-
-
-class UpperBaseStructure(Cuboid):
+class UpperBaseStructure(FastCapCuboid):
     """
     The BaseStructure will look like the followning scheme:
 
@@ -214,18 +231,15 @@ class UpperBaseStructure(Cuboid):
 
     The marker eee show where no face is defined and an ElectrodeStructure is added
     later on.
-
-
     """
-    def __init__(self, elec_width, elec_sep, elec_cnt, omit_faces=[],*args, **kwargs):
+
+    def __init__(self, elec_width, elec_sep, elec_cnt, *args, **kwargs):
 
         self.elec_width = elec_width    # elec distance in y-direction
         self.elec_sep = elec_sep        # distance between 2 Electrodes
         self.elec_cnt = elec_cnt        # number of electrodes
 
         super(UpperBaseStructure, self).__init__(*args, **kwargs)
-
-        self.omit_faces = omit_faces
 
     def set_front_face(self):
         zero = np.array([0.0, 0.0, 0.0])
@@ -242,21 +256,6 @@ class UpperBaseStructure(Cuboid):
                       for n in range(self.elec_cnt - 1)]
         faces_list += [start_end_face,
                        start_end_face.copy() + np.array([self.width - (self.elec_sep + self.elec_width), 0.0, 0.0])]
-
-    def set_back_face(self):
-        zero = np.array([0.0, 0.0, 0.0])
-        one = np.array([0.0, 0.0, self.height])
-        two = np.array([self.width, 0.0, self.height])
-        three = np.array([self.width, 0.0, 0.0])
-        self.back_face = GeomFace(4, np.array([zero, one, two, three])) + np.array([0.0, self.length, 0.0])
-
-    def prep_export_string(self,cond_name=1):
-        export_string = ""
-        faces_to_export = [face for face in self.all_faces if not face in self.omit_faces]
-        for face in faces_to_export:
-            export_string += face.prep_export_string()
-
-        return export_string
 
 
 class IdtLowerStructure:
