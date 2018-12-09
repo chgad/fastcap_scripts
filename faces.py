@@ -92,14 +92,14 @@ class GeomFace(GeomFaceUtilities):
             if self.vertice_cnt not in (3, 4):
                 raise ValueError("For FastCap faces (is_fast_cap=True) only triangles and rectangles are allowed.")
 
-    def prep_export_string(self, conductor_name=1):
+    def prep_export_string(self, cond_name=1):
         shape_indicator = "T"
         base_string = "{shape}  {name}  {} {} {}  {} {} {}  {} {} {}\n"
         if self.vertice_cnt == 4:
             shape_indicator = "Q"
             base_string = "{shape}  {name}  {} {} {}  {} {} {}  {} {} {}  {} {} {}\n"
 
-        return base_string.format(*self.corners.flatten(), shape=shape_indicator, name=conductor_name)
+        return base_string.format(*self.corners.flatten(), shape=shape_indicator, name=cond_name)
 
 
 class GeomFaceList(GeomFaceListUtilities):

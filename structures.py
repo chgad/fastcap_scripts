@@ -126,7 +126,6 @@ class FastCapCuboid(Cuboid):
                     final_list = [*final_list, *actual_attr]
                 else:
                     final_list.append(actual_attr)
-
         return GeomFaceList(final_list)
 
     def fields_to_export(self):
@@ -138,10 +137,9 @@ class FastCapCuboid(Cuboid):
             actual_attr = getattr(self, attr)
             if attr.endswith("face") and actual_attr and attr not in self.omit_faces:
                 if isinstance(actual_attr, GeomFaceList):
-                    final_list = [*final_list, *attr]
+                    final_list = [*final_list, *actual_attr]
                 else:
-                    final_list.append(attr)
-
+                    final_list.append(actual_attr)
         return GeomFaceList(final_list)
 
     def prep_export_string(self,cond_name=1):
@@ -247,15 +245,17 @@ class UpperBaseStructure(FastCapCuboid):
         two = np.array([2 * self.elec_sep + self.elec_width, 0.0, self.height])
         three = np.array([2 * self.elec_sep + self.elec_width, 0.0, 0.0])
         sec_three = np.array([self.elec_sep + self.elec_width, 0.0, 0.0])
+        sec_two = np.array([self.elec_sep + self.elec_width, 0.0, self.height])
 
-        start_end_face = base_face = GeomFace(4, np.array([zero, one, two, sec_three]))
-        base_face = base_face = GeomFace(4, np.array([zero, one, two, three]))
+        start_end_face = GeomFace(4, np.array([zero, one, sec_two, sec_three]))
+        base_face = GeomFace(4, np.array([zero, one, two, three]))
 
         separation = 2 * (self.elec_width + self.elec_sep)
         faces_list = [base_face.copy() + np.array([n * separation + 2 * self.elec_width + self.elec_sep, 0.0, 0.0])
                       for n in range(self.elec_cnt - 1)]
         faces_list += [start_end_face,
                        start_end_face.copy() + np.array([self.width - (self.elec_sep + self.elec_width), 0.0, 0.0])]
+        self.front_face = GeomFaceList(faces_list)
 
 
 class IdtLowerStructure:
@@ -293,7 +293,7 @@ class IdtLowerStructure:
     def set_electrodes(self):
         electrode = ElectrodeStructure(length=self.elec_length, width=self.elec_width, height=self.height,
                                        omit_faces=["bottom_face", "front_face"])
-        separation = 2*(self.elec_width + self.elec_sep)
+        separation = 2 * (self.elec_width + self.elec_sep)
         self.electrodes = [electrode.copy() + np.array([n * separation, self.base_length, 0.0])
                            for n in range(self.elec_cnt)]
 
@@ -342,7 +342,7 @@ class IdtUpperStructure(IdtLowerStructure):
         electrode = ElectrodeStructure(length=self.elec_length, width=self.elec_width, height=self.height,
                                        omit_faces=["bottom_face", "back_face"])
         separation = 2 * (self.elec_width + self.elec_sep)
-        self.electrodes = [electrode.copy() + np.array([(n+0.5) * separation, -self.elec_length, 0.0])
+        self.electrodes = [electrode.copy() + np.array([(n + 0.5) * separation, -self.elec_length, 0.0])
                            for n in range(self.elec_cnt)]
 
 
