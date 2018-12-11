@@ -276,11 +276,14 @@ class IdtLowerStructure:
         self.electrodes = None
         self.base = None
 
+        self.diel_faces = None
+
         self.setup()
 
     def setup(self):
         self.set_base()
         self.set_electrodes()
+        self.setup_diel_faces()
 
     def set_base_width(self):
         return self.elec_cnt * self.elec_width + (self.elec_cnt-1)*(self.elec_width+2*self.elec_sep)
@@ -296,6 +299,33 @@ class IdtLowerStructure:
         separation = 2 * (self.elec_width + self.elec_sep)
         self.electrodes = [electrode.copy() + np.array([n * separation, self.base_length, 0.0])
                            for n in range(self.elec_cnt)]
+
+    def setup_diel_faces(self):
+        self.diel_faces = GeomFaceList([*self.set_diel_short_faces(), *self.set_diel_long_faces()])
+
+    def set_diel_short_faces(self):
+        zero = np.array([0.0, 0.0, 0.0])
+        one = np.array([0.0, self.elec_sep, 0.0])
+        two = np.array([self.elec_width, self.elec_sep, 0.0])
+        three = np.array([self.elec_width, 0.0, 0.0])
+        base_face = GeomFace(4, np.array([zero, one, two, three]))
+
+        separation = 2 * (self.elec_width + self.elec_sep)
+        final_list = [base_face.copy() + np.array([n * separation, self.elec_length + self.base_length, 0.0])
+                      for n in range(self.elec_cnt)]
+        return final_list
+
+    def set_diel_long_faces(self):
+        zero = np.array([0.0, 0.0, 0.0])
+        one = np.array([0.0, self.elec_length + self.elec_sep, 0.0])
+        two = np.array([self.elec_sep, self.elec_length + self.elec_sep, 0.0])
+        three = np.array([self.elec_sep, 0.0, 0.0])
+        base_face = GeomFace(4, np.array([zero, one, two, three]))
+
+        separation = 2 * (self.elec_width + self.elec_sep)
+        final_list = [base_face.copy() + np.array([n * separation + self.elec_width, self.base_length, 0.0])
+                      for n in range(self.elec_cnt-1)]
+        return final_list
 
     def prep_export_strings(self):
 
@@ -347,6 +377,6 @@ class IdtUpperStructure(IdtLowerStructure):
 
 
 # Test for IdtLowerStructure
-# idt_upper = IdtUpperStructure(elec_length=20, elec_width=2, elec_sep=3, elec_cnt=10, base_length=5, height=7)
+# idt_upper = IdtUpperStructure(elec_length=20, elec_width=2, elec_sep=3, elec_cnt=9, base_length=5, height=7)
 #
 # idt_upper.export_to_file(cond_file_name="test_upper_cond_file.txt", diel_file_name="test_upper_diel_file.txt")

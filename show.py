@@ -128,6 +128,6 @@ def main(file_name, center=np.array([0, 0, 0])):
         pygame.time.wait(100)
 
 
-name_of_file = "test_cond_file.txt"
+name_of_file = "whole_idt.txt"
 
-main(name_of_file, center=np.array([-46.0, -2.5, -3.5]))
+main(name_of_file, center=np.array([-46.0, -14, -3.5]))
