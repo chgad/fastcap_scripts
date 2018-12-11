@@ -146,7 +146,7 @@ class FastCapCuboid(Cuboid):
         return self.fields_to_export().prep_export_string(cond_name=cond_name)
 
     def export_to_file(self,file_name):
-        with open(file_name, "w") as f:
+        with open(file_name, "a") as f:
             f.write(self.prep_export_string())
             f.close()
 
@@ -348,11 +348,11 @@ class IdtLowerStructure:
 
     def export_to_file(self,cond_file_name, diel_file_name):
         cond, diel = self.prep_export_strings()
-        with open(cond_file_name, "w") as f:
+        with open(cond_file_name, "a") as f:
             f.write(cond)
             f.close()
 
-        with open(diel_file_name, "w")as f:
+        with open(diel_file_name, "a")as f:
             f.write(diel)
             f.close()
 
