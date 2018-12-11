@@ -103,7 +103,7 @@ def main(file_name, center=np.array([0, 0, 0])):
     quadrats = read_file(file_name)
 
     gluPerspective(90, (display[0] / display[1]), 0.1, 600.0)
-    glTranslate(0.0, 0.0, -100.0)
+    glTranslate(0.0, 0.0, -10.0)
     glTranslate(*center)
 
     while True:
@@ -128,6 +128,7 @@ def main(file_name, center=np.array([0, 0, 0])):
         pygame.time.wait(100)
 
 
-name_of_file = "whole_idt.txt"
-
-main(name_of_file, center=np.array([-46.0, -14, -3.5]))
+name_of_file = "si_o_2_diel.txt"
+si_o_2_center = np.array([0.0, 0.0, 0.0])
+idt_center = np.array([-46.0, -14, -3.5])
+main(name_of_file, center=si_o_2_center)

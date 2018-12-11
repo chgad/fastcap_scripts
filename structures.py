@@ -146,7 +146,7 @@ class FastCapCuboid(Cuboid):
         return self.fields_to_export().prep_export_string(cond_name=cond_name)
 
     def export_to_file(self,file_name):
-        with open(file_name, "a") as f:
+        with open(file_name, "w") as f:
             f.write(self.prep_export_string())
             f.close()
 
@@ -301,26 +301,32 @@ class IdtLowerStructure:
                            for n in range(self.elec_cnt)]
 
     def setup_diel_faces(self):
-        self.diel_faces = GeomFaceList([*self.set_diel_short_faces(), *self.set_diel_long_faces()])
+        self.diel_faces = GeomFaceList([*self.set_diel_short(), *self.set_diel_long()])
 
-    def set_diel_short_faces(self):
+    def prep_diel_short(self):
         zero = np.array([0.0, 0.0, 0.0])
         one = np.array([0.0, self.elec_sep, 0.0])
         two = np.array([self.elec_width, self.elec_sep, 0.0])
         three = np.array([self.elec_width, 0.0, 0.0])
-        base_face = GeomFace(4, np.array([zero, one, two, three]))
+        return GeomFace(4, np.array([zero, one, two, three]))
+
+    def prep_diel_long(self):
+        zero = np.array([0.0, 0.0, 0.0])
+        one = np.array([0.0, self.elec_length + self.elec_sep, 0.0])
+        two = np.array([self.elec_sep, self.elec_length + self.elec_sep, 0.0])
+        three = np.array([self.elec_sep, 0.0, 0.0])
+        return GeomFace(4, np.array([zero, one, two, three]))
+
+    def set_diel_short(self):
+        base_face = self.prep_diel_short()
 
         separation = 2 * (self.elec_width + self.elec_sep)
         final_list = [base_face.copy() + np.array([n * separation, self.elec_length + self.base_length, 0.0])
                       for n in range(self.elec_cnt)]
         return final_list
 
-    def set_diel_long_faces(self):
-        zero = np.array([0.0, 0.0, 0.0])
-        one = np.array([0.0, self.elec_length + self.elec_sep, 0.0])
-        two = np.array([self.elec_sep, self.elec_length + self.elec_sep, 0.0])
-        three = np.array([self.elec_sep, 0.0, 0.0])
-        base_face = GeomFace(4, np.array([zero, one, two, three]))
+    def set_diel_long(self):
+        base_face = self.prep_diel_long()
 
         separation = 2 * (self.elec_width + self.elec_sep)
         final_list = [base_face.copy() + np.array([n * separation + self.elec_width, self.base_length, 0.0])
@@ -368,6 +374,24 @@ class IdtUpperStructure(IdtLowerStructure):
                                        length=self.base_length, width=self.base_width, height=self.height,
                                        omit_faces=["bottom_face"])
 
+    def set_diel_short(self):
+        base_face = self.prep_diel_short()
+
+        separation = 2 * (self.elec_width + self.elec_sep)
+        final_list = [base_face.copy() + np.array([(n+0.5) * separation, -(self.elec_length+self.elec_sep), 0.0])
+                      for n in range(self.elec_cnt)]
+        return final_list
+
+    def set_diel_long(self):
+
+        base_face = self.prep_diel_long()
+
+        separation = 2 * (self.elec_width + self.elec_sep)
+        final_list = [base_face.copy() + np.array(
+            [n * separation + 2 * self.elec_width + self.elec_sep, -(self.elec_length + self.elec_sep), 0.0])
+                      for n in range(self.elec_cnt)]
+        return final_list
+
     def set_electrodes(self):
         electrode = ElectrodeStructure(length=self.elec_length, width=self.elec_width, height=self.height,
                                        omit_faces=["bottom_face", "back_face"])
@@ -380,3 +404,39 @@ class IdtUpperStructure(IdtLowerStructure):
 # idt_upper = IdtUpperStructure(elec_length=20, elec_width=2, elec_sep=3, elec_cnt=9, base_length=5, height=7)
 #
 # idt_upper.export_to_file(cond_file_name="test_upper_cond_file.txt", diel_file_name="test_upper_diel_file.txt")
+
+class SiO2Layer(FastCapCuboid):
+    def __init__(self,structure_length, structure_width, *args,**kwargs):
+        self.structure_length = structure_length
+        self.structure_width = structure_width
+        super(SiO2Layer, self).__init__(*args, **kwargs)
+
+    def prep_top_longer_part(self):
+        y = 0.5*(self.length - self.structure_length)
+        zero = np.array([0.0, 0.0, self.height])
+        one = np.array([0.0, y, self.height])
+        two = np.array([self.width, y, self.height])
+        three = np.array([self.width, 0.0, self.height])
+        return GeomFace(4, np.array([zero, one, two, three]))
+
+    def prep_top_shorter_part(self):
+        x = 0.5 * (self.width - self.structure_width)
+        zero = np.array([0.0, 0.0, self.height])
+        one = np.array([0.0, self.structure_length, self.height])
+        two = np.array([x, self.structure_length, self.height])
+        three = np.array([x, 0.0, self.height])
+        return GeomFace(4, np.array([zero, one, two, three]))
+
+    def set_top_face(self):
+        long_part = self.prep_top_longer_part()
+        short_part = self.prep_top_shorter_part() + np.array([0.0, 0.5 * (self.length - self.structure_length), 0.0])
+        final_list = [long_part,
+                      long_part.copy() + np.array([0.0, 0.5 * (self.length + self.structure_length), 0.0]),
+                      short_part.copy(),
+                      short_part.copy() + np.array([0.5*(self.width + self.structure_width), 0.0, 0.0])]
+        self.top_face = GeomFaceList(final_list)
+
+
+# Test for SiO2Layer
+# si_o_two = SiO2Layer(structure_length=1, structure_width=1, length=10, width=10, height=3)
+# si_o_two.export_to_file("si_o_2_diel.txt")
