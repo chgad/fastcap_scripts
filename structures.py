@@ -5,6 +5,7 @@ import copy as cp
 
 import numpy as np
 
+from translations import IdtTranslation
 from faces import GeomFace, GeomFaceList
 
 
@@ -258,11 +259,11 @@ class UpperBaseStructure(FastCapCuboid):
         self.front_face = GeomFaceList(faces_list)
 
 
-class IdtLowerStructure:
+class IdtLowerStructure(IdtTranslation):
 
     def __init__(self, elec_length, elec_width , elec_sep, elec_cnt,
                  base_length, height):
-
+        super(IdtLowerStructure, self).__init__()
         self.elec_length = elec_length
         self.elec_width = elec_width
         self.elec_sep = elec_sep
