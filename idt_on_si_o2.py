@@ -1,15 +1,45 @@
+# This Script creates a  IDT-Structure on a Silicon Chips with a Silicondioxide layer between the conducting
+# IDT Part and the Conducting Silicon
+#
+
 from os.path import isfile
 from os import remove
 from structures import IdtLowerStructure, IdtUpperStructure, SiO2Layer, FastCapCuboid
 
 import numpy as np
 
-idt_cond_filename = "idt_conductor_air.txt"
-cond_diel_filename = "conductor_diel.txt"
-si_o2_filename = "si_o2.txt"
-si_cond_filename = "si_substrate_conductor.txt"
+# Files to store the IDT-to-Air interfaces
 
-file_list = [idt_cond_filename, cond_diel_filename, si_o2_filename, si_cond_filename]
+idt_lower_filename = "idt_lower_cond_air.txt"
+idt_upper_filename = "idt_upper_cond_air.txt"
+
+# Files to store the IDT-to-SiO_2 interfaces
+
+idt_lower_diel_filename = "idt_lower_cond_diel.txt"
+idt_upper_diel_filename = "idt_upper_cond_diel.txt"
+
+# Files to store the SiO_2-to-Air interfaces
+
+si_o2_filename = "si_o2.txt"
+
+# File to store the Si-to-Air interfaces
+
+si_cond_filename = "si_substrate_cond_air.txt"
+
+# File to store the Si-to-SiO_2 interfaces
+
+si_diel_filename = "si_substrate_cond_diel.txt"
+
+file_list = [idt_lower_filename,
+             idt_upper_filename,
+             idt_lower_diel_filename,
+             idt_upper_diel_filename,
+             si_o2_filename,
+             si_cond_filename,
+             si_diel_filename]
+
+# Sanitycheck wether any oth the provided Files allready exists and prompt
+# user action if so. Existing files will be overwritten, otherwise the script exits.
 
 if any(map(isfile, file_list)):
     print("One or more of the provided files allready exist.")
@@ -26,23 +56,31 @@ if any(map(isfile, file_list)):
         print("Exiting......")
         exit()
 
-electrode_count = 5
-electrode_length = 7.0
-electrode_width = 1.0
-electrode_sep = 2.0
 
-base_length = 5.0
+# All lengths provided in Micro meters
+# All parameters concerning the IDT structure
+electrode_count = 41
+electrode_length = 139
+electrode_width = 1.35
+electrode_sep = 1.65
 
-idt_structure_height = 3.0
+base_length = 20.41
+
+idt_structure_height = 0.110
 # idt_structure_length = 0.0
 # idt_structure_width = 0.0
 
-substrate_length = 150.0
-substrate_width = 150.0
+# All parameters concerning the overall substrate
+substrate_length = 10000
+substrate_width = 10000
 
-si_o2_height = 2.0
+# SiO_2 layer height
+si_o2_height = 0.2
 
-si_height = 5.0
+# Si layer height
+si_height = 600
+
+# Creation of the IDT Structure
 
 idt_lower = IdtLowerStructure(elec_length=electrode_length, elec_width=electrode_width, elec_sep=electrode_sep,
                               elec_cnt=electrode_count, base_length=base_length, height=idt_structure_height)
@@ -54,6 +92,8 @@ idt_upper + np.array([0.0, electrode_length + electrode_sep + base_length, 0.0])
 idt_structure_length = 2 * base_length + electrode_length + electrode_sep
 idt_structure_width = idt_lower.base_width
 
+# Alignment translation to position the IDT structure in the middle of the Substrate
+
 align_idt_vector = np.array([0.5*(substrate_width - idt_structure_width),
                              0.5 * (substrate_length - idt_structure_length),
                              0.0])
@@ -61,26 +101,45 @@ align_idt_vector = np.array([0.5*(substrate_width - idt_structure_width),
 idt_lower + align_idt_vector
 idt_upper + align_idt_vector
 
+# Creation of the SiO_2 layer
+
 si_o2_layer = SiO2Layer(structure_length=idt_structure_length, structure_width=idt_structure_width,
                         length=substrate_length, width=substrate_length, height=si_o2_height,
                         omit_faces=["bottom_face", ])
 
+# Creation of Si layer
+
 si_layer = FastCapCuboid(length=substrate_length, width=substrate_width, height=si_height, omit_faces=["top_face"])
+
+# Positioning of Si and SiO_2 layer
 
 si_o2_layer - np.array([0.0, 0.0, si_o2_height])
 si_layer - np.array([0.0, 0.0, si_o2_height + si_height])
 
-idt_lower.export_to_file(cond_file_name=idt_cond_filename, diel_file_name=cond_diel_filename)
-idt_upper.export_to_file(cond_file_name=idt_cond_filename, diel_file_name=cond_diel_filename)
+# Export part
+#
+# Export IDT structure
+idt_lower.export_to_file(cond_file_name=idt_lower_filename, diel_file_name=idt_lower_diel_filename)
+idt_upper.export_to_file(cond_file_name=idt_upper_filename, diel_file_name=idt_upper_diel_filename)
+
+# Export SiO_2-to-Air interfaces betwen the Electrodes of the IDT structure
 
 diel_faces_string = ""
 diel_faces_string += idt_lower.diel_faces.prep_export_string()
 diel_faces_string += idt_upper.diel_faces.prep_export_string()
+
 with open(si_o2_filename, "a") as f:
     f.write(diel_faces_string)
 
+# Export SiO_2 layer
+
 si_o2_layer.export_to_file(file_name=si_o2_filename)
 
+# Export Si-to-Air interfaces
+
 si_layer.export_to_file(file_name=si_cond_filename)
-with open(cond_diel_filename, "a") as f:
+
+# Export Si-to-SiO_2 interfaces
+
+with open(si_diel_filename, "a") as f:
     f.write(si_layer.top_face.prep_export_string())

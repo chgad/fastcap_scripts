@@ -16,7 +16,8 @@ AXIS = {
 
 def prep_points(string_list):
     final_list = []
-    for point in string_list:
+    for index, point in enumerate(string_list):
+        # print(index, point)
         splitted = point.split(" ")
         final_list.append(tuple(map(lambda x: float(x), splitted)))
     return final_list
@@ -29,31 +30,31 @@ def get_center(quads):
 
 
 def read_file(file_name):
-    pattern = re.compile(r"-?[0-9]*\.[0-9]* -?[0-9]*\.[0-9]* -?[0-9]*\.[0-9]*")
+    pattern = re.compile(r"-?[0-9]*\.[0-9e\-]* -?[0-9]*\.[0-9e\-]* -?[0-9]*\.[0-9e\-]*")
     with open(file_name, "r") as f:
         quads = [prep_points(pattern.findall(line)) for line in f.readlines() if line.startswith("Q")]
-        f.close()
 
     return quads
 
 
 def structure(quadrats):
-    glColor3f(0.52, 0.804, 0.918)
-    glBegin(GL_QUADS)
-    order = [(0, 1), (1, 2), (2, 3), (3, 0)]
-    for quad in quadrats:
-
-        for point in quad:
-            glVertex3fv(point)
-    glEnd()
+    # glColor3f(0.52, 0.804, 0.918)
+    # glBegin(GL_QUADS)
+    #
+    # for quad in quadrats:
+    #     for point in quad:
+    #         glVertex3fv(point)
+    #
+    # glEnd()
     glBegin(GL_LINES)
     glColor3f(1, 0, 0)
     order = [(0, 1), (1, 2), (2, 3), (3, 0)]
-    for quad in quadrats:
 
-        for i,j in order:
+    for quad in quadrats:
+        for i, j in order:
             glVertex3fv(quad[i])
             glVertex3fv(quad[j])
+
     glEnd()
 
 
@@ -76,7 +77,7 @@ def rotate(axis, center, clock_wise=0, angle=30.0):
 
 def translate(axis, negative_dir=1):
     vector = np.array(AXIS.get(axis))
-    glTranslate(*((-1)**negative_dir*20.0*vector))
+    glTranslate(*((-1)**negative_dir*10*vector))
 
 
 def main(file_name):
@@ -116,7 +117,7 @@ def main(file_name):
     pygame.display.set_mode(display, DOUBLEBUF | OPENGL)
     glEnable(GL_PROGRAM_POINT_SIZE)
     gluPerspective(90, (display[0] / display[1]), 0.1, 600.0)
-    glTranslate(0.0, 0.0, -100.0)
+    glTranslate(0.0, 0.0, -100)
     glTranslate(*center)
     # glColor3f(0.52, 0.804, 0.918)
     # light_ambient = [0.2, 0.2, 0.2, 1.0]
@@ -135,7 +136,7 @@ def main(file_name):
     # glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient)
     # glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse)
     # glMaterialf(GL_FRONT, GL_SHININESS, mat_shininess)
-    #
+
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
