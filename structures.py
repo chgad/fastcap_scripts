@@ -43,11 +43,8 @@ class Cuboid:
         self.left_face = GeomFace(4, np.array([zero, one, two, three]))
 
     def set_right_face(self):
-        zero = np.array([self.width, 0.0, 0.0])
-        one = np.array([self.width, self.length, 0.0])
-        two = np.array([self.width, self.length, self.height])
-        three = np.array([self.width, 0.0, self.height])
-        self.right_face = GeomFace(4, np.array([zero, one, two, three]))
+        # Left face is setup first
+        self.right_face = self.left_face.copy() + np.array([self.width, 0.0, 0.0])
 
     def set_front_face(self):
         zero = np.array([0.0, 0.0, 0.0])
@@ -57,11 +54,8 @@ class Cuboid:
         self.front_face = GeomFace(4, np.array([zero, one, two, three]))
 
     def set_back_face(self):
-        zero = np.array([0.0, self.length, 0.0])
-        one = np.array([0.0, self.length, self.height])
-        two = np.array([self.width, self.length, self.height])
-        three = np.array([self.width, self.length, 0.0])
-        self.back_face = GeomFace(4, np.array([zero, one, two, three]))
+        # Front face is setup first
+        self.back_face = self.front_face.copy() + np.array([0.0, self.length, 0.0])
 
     def set_bottom_face(self):
         zero = np.array([0.0, 0.0, 0.0])
@@ -71,23 +65,37 @@ class Cuboid:
         self.bottom_face = GeomFace(4, np.array([zero, one, two, three]))
 
     def set_top_face(self):
-        zero = np.array([0.0, 0.0, self.height])
-        one = np.array([0.0, self.length, self.height])
-        two = np.array([self.width, self.length, self.height])
-        three = np.array([self.width, 0.0, self.height])
-        self.top_face = GeomFace(4, np.array([zero, one, two, three]))
+        # Bottom face is setup first
+        self.top_face = self.bottom_face.copy() + np.array([0.0, 0.0, self.height])
 
     def setup_all_faces(self):
+        # ORDER MATTERS HERE
         self.set_front_face()
         self.set_back_face()
+
         self.set_left_face()
         self.set_right_face()
+
         self.set_bottom_face()
         self.set_top_face()
 
     def get_all_faces(self):
         return GeomFaceList([getattr(self, face) for face in self.__dict__
                              if face.endswith("face") and getattr(self, face)])
+
+    def prep_blender_data(self):
+        exp_corners = []
+        exp_faces = []
+        start_ind = 0
+        dumb__switch = 1
+        for face in self.all_faces:
+            print(face)
+            corners, fce = face.prep_blender_data(start_index=start_ind)
+            exp_corners.extend(corners)
+            exp_faces.append(fce)
+            start_ind += face.vertice_cnt
+
+        return exp_corners, exp_faces
 
     def copy(self):
         return cp.deepcopy(self)

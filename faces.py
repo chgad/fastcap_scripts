@@ -82,7 +82,7 @@ class GeomFace(GeomFaceUtilities):
         if not self.vertice_cnt == len(self.corners):
             raise ValueError(
                 "Not enough corner points provided for a polygon with {n} vertices".format(n=self.vertice_cnt))
-        if not (np.array([0.0, 0.0, 0.0]) in self.corners):
+        if not any((np.array([0.0, 0.0, 0.0]) == x).all() for x in self.corners):
             raise ValueError(" The Point (0.0, 0.0, 0.0) is not included in the variable corners.")
         if list(map(lambda x: len(x) == 3, self.corners)).count(False):
             raise ValueError("Not all corners provided are a 3D vector.")
@@ -100,6 +100,9 @@ class GeomFace(GeomFaceUtilities):
             base_string = "{shape}  {name}  {} {} {}  {} {} {}  {} {} {}  {} {} {}\n"
 
         return base_string.format(*self.corners.flatten(), shape=shape_indicator, name=cond_name)
+
+    def prep_blender_data(self, start_index=0):
+        return self.corners, (start_index + 0, start_index + 1, start_index + 2, start_index + 3)
 
 
 class GeomFaceList(GeomFaceListUtilities):
@@ -131,6 +134,18 @@ class GeomFaceList(GeomFaceListUtilities):
         for face in self.faces:
             export_string += face.prep_export_string(cond_name=cond_name)
         return export_string
+
+    def prep_blender_data(self):
+        exp_corners = []
+        exp_faces = []
+        start_ind = 0
+        for face in self:
+            corners, fce = face.prep_blender_data(start_index=start_ind)
+            exp_corners.extend(corners)
+            exp_faces.append(fce)
+            start_ind += face.vertice_cnt
+
+        return exp_corners, exp_faces
 
     def __iter__(self):
         return self.faces.__iter__()
