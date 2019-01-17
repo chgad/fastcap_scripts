@@ -37,25 +37,32 @@ class Cuboid:
 
     def set_left_face(self):
         zero = np.array([0.0, 0.0, 0.0])
-        one = np.array([0.0, self.length, 0.0])
+        one = np.array([0.0, 0.0, self.height])
         two = np.array([0.0, self.length, self.height])
-        three = np.array([0.0, 0.0, self.height])
+        three = np.array([0.0, self.length, 0.0])
+
         self.left_face = GeomFace(4, np.array([zero, one, two, three]))
 
     def set_right_face(self):
-        # Left face is setup first
-        self.right_face = self.left_face.copy() + np.array([self.width, 0.0, 0.0])
+        zero = np.array([0.0, 0.0, 0.0])
+        one = np.array([0.0, self.length, 0.0])
+        two = np.array([0.0, self.length, self.height])
+        three = np.array([0.0, 0.0, self.height])
+        self.right_face = GeomFace(4, np.array([zero, one, two, three])) + np.array([self.width, 0.0, 0.0])
 
     def set_front_face(self):
+        zero = np.array([0.0, 0.0, 0.0])
+        one = np.array([self.width, 0.0, 0.0])
+        two = np.array([self.width, 0.0, self.height])
+        three = np.array([0.0, 0.0, self.height])
+        self.front_face = GeomFace(4, np.array([zero, one, two, three]))
+
+    def set_back_face(self):
         zero = np.array([0.0, 0.0, 0.0])
         one = np.array([0.0, 0.0, self.height])
         two = np.array([self.width, 0.0, self.height])
         three = np.array([self.width, 0.0, 0.0])
-        self.front_face = GeomFace(4, np.array([zero, one, two, three]))
-
-    def set_back_face(self):
-        # Front face is setup first
-        self.back_face = self.front_face.copy() + np.array([0.0, self.length, 0.0])
+        self.back_face = GeomFace(4, np.array([zero, one, two, three])) + np.array([0.0, self.length, 0.0])
 
     def set_bottom_face(self):
         zero = np.array([0.0, 0.0, 0.0])
@@ -65,8 +72,11 @@ class Cuboid:
         self.bottom_face = GeomFace(4, np.array([zero, one, two, three]))
 
     def set_top_face(self):
-        # Bottom face is setup first
-        self.top_face = self.bottom_face.copy() + np.array([0.0, 0.0, self.height])
+        zero = np.array([0.0, 0.0, 0.0])
+        one = np.array([self.width, 0.0, 0.0])
+        two = np.array([self.width, self.length, 0.0])
+        three = np.array([0.0, self.length, 0.0])
+        self.top_face = GeomFace(4, np.array([zero, one, two, three])) + np.array([0.0, 0.0, self.height])
 
     def setup_all_faces(self):
         # ORDER MATTERS HERE
