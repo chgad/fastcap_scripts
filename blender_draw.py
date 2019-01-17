@@ -22,7 +22,7 @@ width, length, height = 1.0, 1.0, 1.0
 # vertices, faces = face_list.prep_blender_data()
 
 # cube = Cuboid(length=length, width=width, height=height)
-# 
+#
 # vertices, faces = cube.prep_blender_data()
 
 elec_width = 1
@@ -32,15 +32,15 @@ length *= 3
 width = elec_cnt * elec_width + (elec_cnt-1)*(elec_width+2*elec_sep)
 height *= 1
 
-# idt_lower = LowerBaseStructure(elec_width=elec_width, elec_sep=elec_sep, elec_cnt=elec_cnt,
-#                                length=length, width=width, height=height,
-#                                omit_faces=["bottom_face"])
-
-idt_upper = UpperBaseStructure(elec_width=elec_width, elec_sep=elec_sep, elec_cnt=elec_cnt-1,
+idt_lower = LowerBaseStructure(elec_width=elec_width, elec_sep=elec_sep, elec_cnt=elec_cnt,
                                length=length, width=width, height=height,
                                omit_faces=["bottom_face"])
 
-vertices, faces = idt_upper.prep_blender_data()
+# idt_upper = UpperBaseStructure(elec_width=elec_width, elec_sep=elec_sep, elec_cnt=elec_cnt-1,
+#                                length=length, width=width, height=height,
+#                                omit_faces=["bottom_face"])
+#
+vertices, faces = idt_lower.prep_blender_data()
 
 mesh_data = bpy.data.meshes.new("Face 1")
 mesh_data.from_pydata(vertices, [], faces)

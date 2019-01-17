@@ -93,15 +93,19 @@ class Cuboid:
         return GeomFaceList([getattr(self, face) for face in self.__dict__
                              if face.endswith("face") and getattr(self, face)])
 
-    def prep_blender_data(self):
+    def prep_blender_data(self, start_index=0, diff_faces=None):
+        if diff_faces:
+            faces = diff_faces
+        else:
+            faces = self.all_faces
         exp_corners = []
         exp_faces = []
-        start_ind = 0
-        for face in self.all_faces:
-            corners, fce = face.prep_blender_data(start_index=start_ind)
+
+        for face in faces:
+            corners, fce = face.prep_blender_data(start_index=start_index)
             exp_corners.extend(corners)
             exp_faces.append(fce)
-            start_ind += face.vertice_cnt
+            start_index += face.vertice_cnt
 
         return exp_corners, exp_faces
 
