@@ -1,5 +1,5 @@
 from faces import GeomFace, GeomFaceList
-from structures import Cuboid, LowerBaseStructure
+from structures import Cuboid, LowerBaseStructure, UpperBaseStructure
 import numpy as np
 import bpy
 
@@ -32,11 +32,15 @@ length *= 3
 width = elec_cnt * elec_width + (elec_cnt-1)*(elec_width+2*elec_sep)
 height *= 1
 
-idt_lower = LowerBaseStructure(elec_width=elec_width, elec_sep=elec_sep, elec_cnt=elec_cnt,
+# idt_lower = LowerBaseStructure(elec_width=elec_width, elec_sep=elec_sep, elec_cnt=elec_cnt,
+#                                length=length, width=width, height=height,
+#                                omit_faces=["bottom_face"])
+
+idt_upper = UpperBaseStructure(elec_width=elec_width, elec_sep=elec_sep, elec_cnt=elec_cnt-1,
                                length=length, width=width, height=height,
                                omit_faces=["bottom_face"])
 
-vertices, faces = idt_lower.prep_blender_data()
+vertices, faces = idt_upper.prep_blender_data()
 
 mesh_data = bpy.data.meshes.new("Face 1")
 mesh_data.from_pydata(vertices, [], faces)

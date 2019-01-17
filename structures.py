@@ -258,13 +258,13 @@ class UpperBaseStructure(FastCapCuboid):
 
     def set_front_face(self):
         zero = np.array([0.0, 0.0, 0.0])
-        one = np.array([0.0, 0.0, self.height])
+        one = np.array([2 * self.elec_sep + self.elec_width, 0.0, 0.0])
         two = np.array([2 * self.elec_sep + self.elec_width, 0.0, self.height])
-        three = np.array([2 * self.elec_sep + self.elec_width, 0.0, 0.0])
-        sec_three = np.array([self.elec_sep + self.elec_width, 0.0, 0.0])
+        three = np.array([0.0, 0.0, self.height])
+        sec_one = np.array([self.elec_sep + self.elec_width, 0.0, 0.0])
         sec_two = np.array([self.elec_sep + self.elec_width, 0.0, self.height])
 
-        start_end_face = GeomFace(4, np.array([zero, one, sec_two, sec_three]))
+        start_end_face = GeomFace(4, np.array([zero, sec_one, sec_two, three]))
         base_face = GeomFace(4, np.array([zero, one, two, three]))
 
         separation = 2 * (self.elec_width + self.elec_sep)
