@@ -97,9 +97,7 @@ class Cuboid:
         exp_corners = []
         exp_faces = []
         start_ind = 0
-        dumb__switch = 1
         for face in self.all_faces:
-            print(face)
             corners, fce = face.prep_blender_data(start_index=start_ind)
             exp_corners.extend(corners)
             exp_faces.append(fce)

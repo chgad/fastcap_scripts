@@ -113,7 +113,7 @@ class GeomFaceList(GeomFaceListUtilities):
     def __init__(self, faces):
         super(GeomFaceList, self).__init__()
         self.faces = faces
-
+        self.vertice_cnt = self.get_vertice_count()
         self.validate()
 
     def validate(self):
@@ -129,13 +129,16 @@ class GeomFaceList(GeomFaceListUtilities):
             raise ValueError("The provided face is not a GeomFace instances.")
         self.faces.append(face)
 
+    def get_vertice_count(self):
+        return sum(map(lambda x: x.vertice_cnt, self))
+
     def prep_export_string(self, cond_name=1):
         export_string = ""
         for face in self.faces:
             export_string += face.prep_export_string(cond_name=cond_name)
         return export_string
 
-    def prep_blender_data(self):
+    def prep_blender_data(self, start_ind):
         exp_corners = []
         exp_faces = []
         start_ind = 0
