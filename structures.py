@@ -281,7 +281,7 @@ class UpperBaseStructure(FastCapCuboid):
 
 class IdtLowerStructure(IdtTranslation):
 
-    def __init__(self, elec_length, elec_width , elec_sep, elec_cnt,
+    def __init__(self, elec_length, elec_width, elec_sep, elec_cnt,
                  base_length, height):
         super(IdtLowerStructure, self).__init__()
         self.elec_length = elec_length
@@ -353,6 +353,24 @@ class IdtLowerStructure(IdtTranslation):
         final_list = [base_face.copy() + np.array([n * separation + self.elec_width, self.base_length, 0.0])
                       for n in range(self.elec_cnt-1)]
         return final_list
+
+    def prep_blender_data(self):
+        exp_corners = []
+        exp_faces = []
+        start_index = 0
+
+        # First prepare elecrodes
+        for elec in self.electrodes:
+            corners, faces = elec.prep_blender_data(start_index=start_index, diff_faces=elec.fields_to_export())
+            exp_corners.extend(corners)
+            exp_faces.extend(faces)
+            start_index = faces[-1][-1] + 1
+        # Now prepare base
+
+        corners, faces = self.base.prep_blender_data(start_index=start_index, diff_faces=self.base.fields_to_export())
+        exp_corners.extend(corners)
+        exp_faces.extend(faces)
+        return exp_corners, exp_faces
 
     def prep_export_strings(self):
 
