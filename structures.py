@@ -200,10 +200,10 @@ class LowerBaseStructure(FastCapCuboid):
 
                     back
 
-    1eee2---3eee4---5eee6---7eee8---9eee10
-    |                                   |
-    |                                   |
-    0-----------------------------------11
+    1eee2-----3eee4-----5eee6-----7eee8-----9eee10
+    |   |     |   |     |   |     |   |     |   |
+    |   |     |   |     |   |     |   |     |   |
+    0-------------------------------------------11
                     front
 
     in the x-y-plane.
@@ -232,6 +232,34 @@ class LowerBaseStructure(FastCapCuboid):
                       for n in range(self.elec_cnt-1)]
 
         self.back_face = GeomFaceList(faces=faces_list)
+
+    def set_top_face(self):
+        """
+        The Top face gets split up into faces that are, alternating, of electrode width and
+        2*electrode separation + electrode width wide. This is depicted in the class Docstring.
+        """
+        # vertices for the electrode wide top faces (in scheme: faces touching eee sections)
+        zero = np.array([0.0, 0.0, 0.0])
+        one = np.array([self.elec_width, 0.0, 0.0])
+        two = np.array([self.elec_width, self.length, 0.0])
+        three = np.array([0.0, self.length, 0.0])
+        # For faces on the right of the above faces we need different vertices for one and two
+        sec_one = np.array([2*self.elec_sep + self.elec_width, 0.0, 0.0])
+        sec_two = np.array([2*self.elec_sep + self.elec_width, self.length, 0.0])
+
+        base_elec_face = GeomFace(4, np.array([zero, one, two, three])) + np.array([0.0, 0.0, self.height])
+        base_sep_face = GeomFace(4, np.array([zero, sec_one, sec_two, three])) + np.array([0.0, 0.0, self.height])
+
+        separation = 2 * (self.elec_width + self.elec_sep)
+
+        # Prepare all faces ouching electrodes
+        faces_list = [base_elec_face.copy() + np.array([n * separation, 0.0, 0.0])
+                      for n in range(self.elec_cnt)]
+        # Extend list by Faces in between the above faces
+        faces_list.extend([base_sep_face.copy() + np.array([self.elec_width + n * separation, 0.0, 0.0])
+                          for n in range(self.elec_cnt-1)])
+
+        self.top_face = GeomFaceList(faces=faces_list)
 
 
 class UpperBaseStructure(FastCapCuboid):
