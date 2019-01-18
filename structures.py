@@ -326,16 +326,16 @@ class IdtLowerStructure(IdtTranslation):
 
     def prep_diel_short(self):
         zero = np.array([0.0, 0.0, 0.0])
-        one = np.array([0.0, self.elec_sep, 0.0])
+        one = np.array([self.elec_width, 0.0, 0.0])
         two = np.array([self.elec_width, self.elec_sep, 0.0])
-        three = np.array([self.elec_width, 0.0, 0.0])
+        three = np.array([0.0, self.elec_sep, 0.0])
         return GeomFace(4, np.array([zero, one, two, three]))
 
     def prep_diel_long(self):
         zero = np.array([0.0, 0.0, 0.0])
-        one = np.array([0.0, self.elec_length + self.elec_sep, 0.0])
+        one = np.array([self.elec_sep, 0.0, 0.0])
         two = np.array([self.elec_sep, self.elec_length + self.elec_sep, 0.0])
-        three = np.array([self.elec_sep, 0.0, 0.0])
+        three = np.array([0.0, self.elec_length + self.elec_sep, 0.0])
         return GeomFace(4, np.array([zero, one, two, three]))
 
     def set_diel_short(self):

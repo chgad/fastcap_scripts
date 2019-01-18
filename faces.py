@@ -138,10 +138,9 @@ class GeomFaceList(GeomFaceListUtilities):
             export_string += face.prep_export_string(cond_name=cond_name)
         return export_string
 
-    def prep_blender_data(self, start_ind):
+    def prep_blender_data(self, start_ind=0):
         exp_corners = []
         exp_faces = []
-        start_ind = 0
         for face in self:
             corners, fce = face.prep_blender_data(start_index=start_ind)
             exp_corners.extend(corners)
