@@ -121,7 +121,7 @@ class GeomFaceList(GeomFaceListUtilities):
             raise ValueError("The profided Value for 'faces' is not a list.")
 
         for face in self.faces:
-            if not isinstance(face, GeomFace):
+            if not isinstance(face, (GeomFace, GeomFaceList)):
                 raise ValueError("The values of 'faces' aren't GeomFace instances, but {}.".format(face))
 
     def append(self, face):
@@ -138,14 +138,20 @@ class GeomFaceList(GeomFaceListUtilities):
             export_string += face.prep_export_string(cond_name=cond_name)
         return export_string
 
-    def prep_blender_data(self, start_ind=0):
+    def prep_blender_data(self, start_index=0):
         exp_corners = []
         exp_faces = []
         for face in self:
-            corners, fce = face.prep_blender_data(start_index=start_ind)
+            corners, fce = face.prep_blender_data(start_index=start_index)
             exp_corners.extend(corners)
-            exp_faces.append(fce)
-            start_ind += face.vertice_cnt
+            if isinstance(fce, list):
+                # We allow faces within the GeomFaceList to be also instances of GeomFaceLists
+                # GeomFaceLists return a list of tuples for faces so we need to call extend
+                # instead of append.
+                exp_faces.extend(fce)
+            else:
+                exp_faces.append(fce)
+            start_index += face.vertice_cnt
 
         return exp_corners, exp_faces
 

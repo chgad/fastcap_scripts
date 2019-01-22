@@ -27,7 +27,7 @@ width, length, height = 1.0, 1.0, 1.0
 
 elec_width = 1
 elec_sep = 3
-elec_cnt = 5
+elec_cnt = 2
 length *= 3
 elec_length = 5
 width = elec_cnt * elec_width + (elec_cnt-1)*(elec_width+2*elec_sep)
@@ -41,17 +41,17 @@ height *= 1
 #                                length=length, width=width, height=height,
 #                                omit_faces=["bottom_face"])
 
-# idt_lower = IdtLowerStructure(elec_length=elec_length, elec_width=elec_width, elec_sep=elec_sep,
-#                               elec_cnt=elec_cnt, base_length=length, height=height)
-#
-# vertices_diel, faces_diel = idt_lower.diel_faces.prep_blender_data()
-#
-# vertices, faces = idt_lower.prep_blender_data()
+idt_lower = IdtLowerStructure(elec_length=elec_length, elec_width=elec_width, elec_sep=elec_sep,
+                              elec_cnt=elec_cnt, base_length=length, height=height)
 
-idt_upper = IdtUpperStructure(elec_length=elec_length, elec_width=elec_width, elec_sep=elec_sep,
-                              elec_cnt=elec_cnt-1, base_length=length, height=height)
+vertices_diel, faces_diel = idt_lower.diel_faces.prep_blender_data()
 
-vertices, faces = idt_upper.prep_blender_data()
+vertices, faces = idt_lower.prep_blender_data()
+
+# idt_upper = IdtUpperStructure(elec_length=elec_length, elec_width=elec_width, elec_sep=elec_sep,
+#                               elec_cnt=elec_cnt-1, base_length=length, height=height)
+#
+# vertices, faces = idt_upper.prep_blender_data()
 
 mesh_data = bpy.data.meshes.new("IDT")
 mesh_data.from_pydata(vertices, [], faces)
@@ -61,11 +61,11 @@ mat = bpy.data.materials.new(name="Conductor")
 obj.data.materials.append(mat)
 bpy.context.scene.objects.link(obj)
 
-# mesh_data_diel = bpy.data.meshes.new("DIEL")
-# mesh_data_diel.from_pydata(vertices_diel, [], faces_diel)
-#
-# obj_diel = bpy.data.objects.new("DIEL", mesh_data_diel)
-# mat = bpy.data.materials.new(name="Dielectric")
-# obj_diel.data.materials.append(mat)
-# bpy.context.scene.objects.link(obj_diel)
+mesh_data_diel = bpy.data.meshes.new("DIEL")
+mesh_data_diel.from_pydata(vertices_diel, [], faces_diel)
+
+obj_diel = bpy.data.objects.new("DIEL", mesh_data_diel)
+mat = bpy.data.materials.new(name="Dielectric")
+obj_diel.data.materials.append(mat)
+bpy.context.scene.objects.link(obj_diel)
 

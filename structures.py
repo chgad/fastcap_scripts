@@ -268,10 +268,11 @@ class UpperBaseStructure(FastCapCuboid):
 
                     back
 
-    1-------------------------------------------2
-    |                                           |
-    |                                           |
-    0----+eee*-----9eee8-----7eee6-----5eee4----3
+
+    1---------------------------------------2
+    |  |   |     |   |     |   |     |   |  |
+    |  |   |     |   |     |   |     |   |  |
+    0--+eee*-----9eee8-----7eee6-----5eee4--3
                     front
 
     in the x-y-plane.
@@ -392,11 +393,25 @@ class IdtLowerStructure(IdtTranslation):
         return GeomFace(4, np.array([zero, one, two, three]))
 
     def prep_diel_long(self):
+        # For blender Purpuose we split the long dielectric surface face, going from upper to lower IDT base, into
+        # a short face, and a face of length of an electdode
+        # this is then represented as a GeomFaceList
+
         zero = np.array([0.0, 0.0, 0.0])
         one = np.array([self.elec_sep, 0.0, 0.0])
-        two = np.array([self.elec_sep, self.elec_length + self.elec_sep, 0.0])
-        three = np.array([0.0, self.elec_length + self.elec_sep, 0.0])
-        return GeomFace(4, np.array([zero, one, two, three]))
+        two = np.array([self.elec_sep, self.elec_sep, 0.0])
+        three = np.array([0.0, self.elec_sep, 0.0])
+        short_face = GeomFace(4, np.array([zero, one, two, three])) + np.array([0.0, self.elec_length, 0.0])
+
+        # Prep long face
+
+        zero = np.array([0.0, 0.0, 0.0])
+        one = np.array([self.elec_sep, 0.0, 0.0])
+        two = np.array([self.elec_sep, self.elec_length, 0.0])
+        three = np.array([0.0, self.elec_length, 0.0])
+        long_face = GeomFace(4, np.array([zero, one, two, three]))
+
+        return GeomFaceList([short_face, long_face])
 
     def set_diel_short(self):
         base_face = self.prep_diel_short()
