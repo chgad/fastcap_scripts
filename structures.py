@@ -281,10 +281,9 @@ class UpperBaseStructure(FastCapCuboid):
     """
 
     def __init__(self, elec_width, elec_sep, elec_cnt, *args, **kwargs):
-
-        self.elec_width = elec_width    # elec distance in y-direction
-        self.elec_sep = elec_sep        # distance between 2 Electrodes
-        self.elec_cnt = elec_cnt        # number of electrodes
+        self.elec_width = elec_width  # elec distance in y-direction
+        self.elec_sep = elec_sep  # distance between 2 Electrodes
+        self.elec_cnt = elec_cnt  # number of electrodes
 
         super(UpperBaseStructure, self).__init__(*args, **kwargs)
 
@@ -302,9 +301,42 @@ class UpperBaseStructure(FastCapCuboid):
         separation = 2 * (self.elec_width + self.elec_sep)
         faces_list = [base_face.copy() + np.array([n * separation + 2 * self.elec_width + self.elec_sep, 0.0, 0.0])
                       for n in range(self.elec_cnt - 1)]
-        faces_list += [start_end_face,
-                       start_end_face.copy() + np.array([self.width - (self.elec_sep + self.elec_width), 0.0, 0.0])]
+        faces_list.extend([start_end_face,
+                           start_end_face.copy() + np.array(
+                               [self.width - (self.elec_sep + self.elec_width), 0.0, 0.0])])
         self.front_face = GeomFaceList(faces_list)
+
+    def set_top_face(self):
+        # Coordinates for the firs Top face with Corners 0, +, "", 1
+        # This is the Start and End top face
+        zero = np.array([0.0, 0.0, 0.0])
+        one = np.array([self.elec_width +self.elec_sep, 0.0 , 0.0])
+        two = np.array([self.elec_width + self.elec_sep, self.length, 0.0])
+        three = np.array([0.0, self.length, 0.0])
+        # Coordinates for the Top faces cornering the Electrode's top faces
+        sec_one = np.array([self.elec_width, 0.0, 0.0])
+        sec_two = np.array([self.elec_width, self.length, 0.0])
+        # Coordinates for the Top faces between the Electrodes
+        third_one = np.array([self.elec_width + 2*self.elec_sep, 0.0, 0.0])
+        third_two = np.array([self.elec_width + 2*self.elec_sep, self.length, 0.0])
+        # Faces
+        start_end_face = GeomFace(4, corners=np.array([zero, one, two, three])) + np.array([0.0, 0.0, self.height])
+        elec_face = GeomFace(4, corners=np.array([zero, sec_one, sec_two, three])) + np.array([0.0, 0.0, self.height])
+        middle_face = GeomFace(4, corners=np.array([zero, third_one, third_two, three])) + np.array(
+            [0.0, 0.0, self.height])
+
+        separation = 2 * (self.elec_width + self.elec_sep)
+        # Start generating all Electrode cornering faces
+        faces_list = [elec_face.copy() + np.array([self.elec_width + self.elec_sep + n * separation, 0.0, 0.0])
+                      for n in range(self.elec_cnt)]
+        # Extend with all Faces in between
+        faces_list.extend([middle_face.copy() + np.array([2*self.elec_width + self.elec_sep + n * separation, 0.0, 0.0])
+                      for n in range(self.elec_cnt-1)])
+        # Finally add start and end faces
+        faces_list.extend(
+            [start_end_face, start_end_face + np.array([self.width - (self.elec_sep + self.elec_width), 0.0, 0.0])])
+
+        self.top_face = GeomFaceList(faces_list)
 
 
 class IdtLowerStructure(IdtTranslation):
