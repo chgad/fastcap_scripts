@@ -48,6 +48,7 @@ vertices_diel, faces_diel = idt_lower.diel_faces.prep_blender_data()
 
 vertices, faces = idt_lower.prep_blender_data()
 
+
 # idt_upper = IdtUpperStructure(elec_length=elec_length, elec_width=elec_width, elec_sep=elec_sep,
 #                               elec_cnt=elec_cnt-1, base_length=length, height=height)
 #

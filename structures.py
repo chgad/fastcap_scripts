@@ -104,7 +104,10 @@ class Cuboid:
         for face in faces:
             corners, fce = face.prep_blender_data(start_index=start_index)
             exp_corners.extend(corners)
-            exp_faces.append(fce)
+            if isinstance(fce, list):
+                exp_faces.extend(fce)
+            else:
+                exp_faces.append(fce)
             start_index += face.vertice_cnt
 
         return exp_corners, exp_faces
@@ -222,11 +225,28 @@ class LowerBaseStructure(FastCapCuboid):
         super(LowerBaseStructure, self).__init__(*args, **kwargs)
 
     def set_back_face(self):
+        """
+        We compose the splitted, by electrodes, into another 3 faces
+        One is elec_sep wide, the next is elec_width wide and the last is again elec_sep wide.
+        Coordinates for first and last face
+        """
         zero = np.array([0.0, 0.0, 0.0])
         one = np.array([0.0, 0.0, self.height])
-        two = np.array([2*self.elec_sep + self.elec_width, 0.0, self.height])
-        three = np.array([2*self.elec_sep + self.elec_width, 0.0, 0.0])
-        base_face = GeomFace(4, np.array([zero, one, two, three]))
+        two = np.array([self.elec_sep, 0.0, self.height])
+        three = np.array([self.elec_sep, 0.0, 0.0])
+        # Coordinates for middle part
+        sec_two = np.array([self.elec_width, 0.0, self.height])
+        sec_three = np.array([self.elec_width, 0.0, 0.0])
+
+        first_last_face = GeomFace(4, np.array([zero, one, two, three]))
+        middle_face = GeomFace(4, np.array([zero, one, sec_two, sec_three]))
+        base_face = GeomFaceList(
+            [
+                first_last_face,
+                middle_face + np.array([self.elec_sep, 0.0, 0.0]),
+                first_last_face.copy() + np.array([self.elec_sep + self.elec_width, 0.0, 0.0])
+            ]
+        )
         separation = 2 * (self.elec_width + self.elec_sep)
         faces_list = [base_face.copy() + np.array([n * separation + self.elec_width, self.length, 0.0])
                       for n in range(self.elec_cnt-1)]
