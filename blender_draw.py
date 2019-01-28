@@ -25,9 +25,9 @@ width, length, height = 1.0, 1.0, 1.0
 #
 # vertices, faces = cube.prep_blender_data()
 
-elec_width = 0.1
-elec_sep = 0.2
-elec_cnt = 20
+elec_width = 1
+elec_sep = 2
+elec_cnt = 2
 length *= 3
 elec_length = 5
 width = elec_cnt * elec_width + (elec_cnt-1)*(elec_width+2*elec_sep)
