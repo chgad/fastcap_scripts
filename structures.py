@@ -355,7 +355,7 @@ class UpperBaseStructure(FastCapCuboid):
                       for n in range(self.elec_cnt-1)])
         # Finally add start and end faces
         faces_list.extend(
-            [start_end_face, start_end_face + np.array([self.width - (self.elec_sep + self.elec_width), 0.0, 0.0])])
+            [start_end_face, start_end_face.copy() + np.array([self.width - (self.elec_sep + self.elec_width), 0.0, 0.0])])
 
         self.top_face = GeomFaceList(faces_list)
 
@@ -547,19 +547,19 @@ class SiO2Layer(FastCapCuboid):
 
     def prep_top_longer_part(self):
         y = 0.5*(self.length - self.structure_length)
-        zero = np.array([0.0, 0.0, self.height])
-        one = np.array([0.0, y, self.height])
-        two = np.array([self.width, y, self.height])
-        three = np.array([self.width, 0.0, self.height])
-        return GeomFace(4, np.array([zero, one, two, three]))
+        zero = np.array([0.0, 0.0, 0.0])
+        one = np.array([self.width, 0.0, 0.0])
+        two = np.array([self.width, y, 0.0])
+        three = np.array([0.0, y, 0.0])
+        return GeomFace(4, np.array([zero, one, two, three])) + np.array([0.0, 0.0, self.height])
 
     def prep_top_shorter_part(self):
         x = 0.5 * (self.width - self.structure_width)
-        zero = np.array([0.0, 0.0, self.height])
-        one = np.array([0.0, self.structure_length, self.height])
-        two = np.array([x, self.structure_length, self.height])
-        three = np.array([x, 0.0, self.height])
-        return GeomFace(4, np.array([zero, one, two, three]))
+        zero = np.array([0.0, 0.0, 0.0])
+        one = np.array([x, 0.0, 0.0])
+        two = np.array([x, self.structure_length, 0.0])
+        three = np.array([0.0, self.structure_length, 0.0])
+        return GeomFace(4, np.array([zero, one, two, three])) + np.array([0.0, 0.0, self.height])
 
     def set_top_face(self):
         long_part = self.prep_top_longer_part()
