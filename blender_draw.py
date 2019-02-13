@@ -192,7 +192,7 @@ if modify:
 
 
     for i in range(insets):
-        bpy.ops.mesh.inset(thickness=0.5)
+        bpy.ops.mesh.inset(use_relative_offset=True, thickness=0.1, use_interpolate=False, use_individual=True)
 
     # only the las insets get divided
 
