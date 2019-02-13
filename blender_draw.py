@@ -1,30 +1,8 @@
 from faces import GeomFace, GeomFaceList
-from structures import Cuboid, LowerBaseStructure, UpperBaseStructure, IdtLowerStructure, IdtUpperStructure, SiO2Layer
+from structures import Cuboid, LowerBaseStructure, UpperBaseStructure, IdtLowerStructure, IdtUpperStructure, SiO2Layer, FastCapCuboid
 import numpy as np
 import bpy
 import time
-
-width, length, height = 1.0, 1.0, 1.0
-
-# zero = np.array([0.0, 0.0, 0.0])
-# one = np.array([0.0, length, 0.0])
-# two = np.array([width, length, 0.0])
-# three = np.array([width, 0.0, 0.0])
-# obj = GeomFace(vertice_cnt=4, corners=[zero, one, two, three])
-#
-# dummy_list = []
-# for i in range(3):
-#     dummy_list.append(obj.copy() + np.array([i * 1.0, 0.0, 0.0]))
-#
-# assert len(dummy_list) == 3
-#
-# face_list = GeomFaceList(dummy_list)
-#
-# vertices, faces = face_list.prep_blender_data()
-
-# cube = Cuboid(length=length, width=width, height=height)
-#
-# vertices, faces = cube.prep_blender_data()
 
 
 def list_electrode_prep_blender_data(cuboid_list, face_name):
@@ -42,20 +20,41 @@ def list_electrode_prep_blender_data(cuboid_list, face_name):
     return exp_vertices, exp_faces
 
 
+idt_height = 1
+
+elec_cnt = 2
+elec_length = 5
 elec_width = 1
 elec_sep = 2
-elec_cnt = 2
-length *= 3
-elec_length = 5
-width = elec_cnt * elec_width + (elec_cnt-1)*(elec_width+2*elec_sep)
-height *= 1
+
+base_length = 3
+
+substrate_length = 20
+substrate_width = 20
+si_o2_height = 4
+
+# idt_height = 0.110
+#
+# elec_cnt = 41
+# elec_length = 139
+# elec_width = 1.35
+# elec_sep = 1.65
+#
+# base_length = 20.41
+#
+# # idt_structure_height = 0.110
+#
+# substrate_length = 500  # 10000
+# substrate_width = 500  # 10000
+# si_o2_height = 0.2
 
 modify = True
 export = True
-subdivide_all = True
-insets = 2
-subdivides = 2
-title = "0  NO_SUB_DIVS\n"
+subdivide_all = False
+insets = 0
+subdivides = 4
+
+title = "0  DUMMY_LOWER_ABOVE_DIEL\n"
 
 # base_lower = LowerBaseStructure(elec_width=elec_width, elec_sep=elec_sep, elec_cnt=elec_cnt,
 #                                 length=length, width=width, height=height,
@@ -66,17 +65,16 @@ title = "0  NO_SUB_DIVS\n"
 #                                omit_faces=["bottom_face"])
 
 idt_lower = IdtLowerStructure(elec_length=elec_length, elec_width=elec_width, elec_sep=elec_sep,
-                              elec_cnt=elec_cnt, base_length=length, height=height)
+                              elec_cnt=elec_cnt, base_length=base_length, height=idt_height)
 
 idt_upper = IdtUpperStructure(elec_length=elec_length, elec_width=elec_width, elec_sep=elec_sep,
-                              elec_cnt=elec_cnt-1, base_length=length, height=height)
+                              elec_cnt=elec_cnt-1, base_length=base_length, height=idt_height)
+
+si_o2_length = elec_sep + 2* idt_upper.base_length + elec_length
+si_o2_width = idt_upper.base_width
 
 
-si_o2 = SiO2Layer(structure_length=elec_sep + 2* idt_upper.base_length + elec_length,
-                  structure_width=idt_upper.base_width,
-                  length=20,
-                  width=20,
-                  height=6)
+si_o2 = FastCapCuboid(length=substrate_length, width=substrate_width, height=si_o2_height)
 
 
 idt_structure_length = elec_sep + 2 * idt_upper.base_length + elec_length
@@ -84,14 +82,15 @@ idt_structure_width = idt_lower.base_width
 
 # Alignment translation to position the IDT structure in the middle of the Substrate
 
-align_idt_vector = np.array([0.5*(20 - idt_structure_width),
-                             0.5 * (20 - idt_structure_length),
+align_idt_vector = np.array([0.5*(substrate_width - idt_structure_width),
+                             0.5 * (substrate_length - idt_structure_length),
                              0.0])
+
 idt_upper + np.array([0.0, elec_length + elec_sep + idt_lower.base_length, 0.0])
 idt_lower + align_idt_vector
 idt_upper + align_idt_vector
 
-si_o2 - np.array([0.0, 0.0, 6.0])
+si_o2 - np.array([0.0, 0.0, si_o2.height*2.0])
 
 # To be simplified after succesful simulation
 
@@ -100,15 +99,14 @@ lower_elec_data = list_electrode_prep_blender_data(idt_lower.electrodes, "bottom
 upper_elec_data = list_electrode_prep_blender_data(idt_upper.electrodes, "bottom_face")
 
 lower_base_bottom_verts, lower_face = idt_lower.base.bottom_face.prep_blender_data()
-upper_base_bottom_vaerts, upper_face = idt_upper.base.bottom_face.prep_blender_data()
+upper_base_bottom_verts, upper_face = idt_upper.base.bottom_face.prep_blender_data()
 
-upper_base_bottom_data = (upper_base_bottom_vaerts, (upper_face,))
-lower_base_bottom_data = (lower_base_bottom_verts, (lower_face,))
+upper_base_bottom_data = (upper_base_bottom_verts, [upper_face,])
+lower_base_bottom_data = (lower_base_bottom_verts, [lower_face,])
 
 upper_data = idt_upper.prep_blender_data()
 
 lower_data = idt_lower.prep_blender_data()
-
 
 diel_upper_data = idt_upper.diel_faces.prep_blender_data()
 
@@ -119,12 +117,12 @@ sio2_data = si_o2.prep_blender_data()
 objects = {
     "IDT_UPPER": upper_data,
     "IDT_LOWER": lower_data,
-    "BASE_BOTTOM_UPPER": upper_base_bottom_data,
-    "BASE_BOTTOM_LOWER": lower_base_bottom_data,
-    "ELEC_UPPER": upper_elec_data,
-    "ELEC_LOWER": lower_elec_data,
-    "DIEL_UPPER": diel_upper_data,
-    "DIEL_LOWER": diel_lower_data,
+    # "BASE_BOTTOM_UPPER": upper_base_bottom_data,
+    # "BASE_BOTTOM_LOWER": lower_base_bottom_data,
+    # "ELEC_UPPER": upper_elec_data,
+    # "ELEC_LOWER": lower_elec_data,
+    # "DIEL_UPPER": diel_upper_data,
+    # "DIEL_LOWER": diel_lower_data,
     "SI_O2": sio2_data
 }
 
@@ -152,21 +150,28 @@ mat_five = bpy.data.materials.new(name="Dielectric")
 mat_five.diffuse_color = (0.0, 1.0, 0.0)  # Green
 
 for name, tpl in objects.items():
-    mat = mat_two
 
-    if name.startswith("IDT"):
-        if name.endswith("UPPER"):
-            mat = mat_one
-        else:
-            mat = mat_two
+    mat = mat_one
+    if name.endswith("LOWER"):
+        mat = mat_two
 
-    elif name.startswith("ELEC") or name.startswith("BASE_BOTTOM"):
-        if name.endswith("UPPER"):
-            mat = mat_three
-        else:
-            mat = mat_four
-    else:
+    if name.startswith("SI_O2"):
         mat = mat_five
+    # mat = mat_two
+
+    # if name.startswith("IDT"):
+    #     if name.endswith("UPPER"):
+    #         mat = mat_one
+    #     else:
+    #         mat = mat_two
+    #
+    # elif name.startswith("ELEC") or name.startswith("BASE_BOTTOM"):
+    #     if name.endswith("UPPER"):
+    #         mat = mat_three
+    #     else:
+    #         mat = mat_four
+    # else:
+    #     mat = mat_five
 
     mesh_data = bpy.data.meshes.new(name)
     mesh_data.from_pydata(tpl[0], [], tpl[1])
@@ -187,28 +192,25 @@ if modify:
 
 
     for i in range(insets):
-        bpy.ops.mesh.inset()
+        bpy.ops.mesh.inset(thickness=0.5)
 
     # only the las insets get divided
 
-    bpy.ops.mesh.select_all(action="SELECT")
-    bpy.ops.mesh.remove_doubles()
-    if not subdivide_all:
-        bpy.ops.mesh.select_all(action="DESELECT")
+    if subdivide_all:
+        bpy.ops.mesh.select_all(action="SELECT")
     if subdivides:
         bpy.ops.mesh.subdivide(number_cuts=subdivides)
+
+    bpy.ops.mesh.select_all(action="SELECT")
+    bpy.ops.mesh.remove_doubles()
 
     bpy.ops.mesh.separate(type="MATERIAL")
     bpy.ops.object.mode_set(mode="OBJECT")
 
 bpy.ops.object.select_all(action="DESELECT")
 
-# obj = bpy.context.scene.objects[0].data
-#
-# print(bpy.context.scene.objects[0].data.materials[0].name)
 
 # This should become a function
-# print([(x.name, list(x.data.materials), len(x.data.polygons)) for x in bpy.context.scene.objects])
 if export:
     for obj in bpy.context.scene.objects:
         data = obj.data
@@ -233,6 +235,8 @@ if export:
         file_name = mat_file_name_dict[data.materials[0].name]
         with open(file_name, "a") as f:
             f.write(exp_str)
+
+    exit()
 
 # print([x for x in bpy.context.scene.objects[0].data.polygons[:2]])
 # vertices_diel, faces_diel = idt_lower.diel_faces.prep_blender_data()

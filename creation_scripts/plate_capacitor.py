@@ -7,10 +7,22 @@ import numpy as np
 
 # All lengths provided in meter
 
-upper_plate = FastCapCuboid(length=1, width=1, height=0.001)
-lower_plate = upper_plate.copy() + np.array([0.0, 0.0, 0.101])
+lower_plate = FastCapCuboid(length=1, width=1, height=0.001, omit_faces=["top_face"])
+upper_plate = FastCapCuboid(length=1, width=1, height=0.001, omit_faces=["bottom_face"])
+
+dielectric = FastCapCuboid(length=1, width=1, height=0.1, omit_faces=["top_face", "bottom_face"])
+dielectric + np.array([0.0, 0.0, 0.001])
+
 
 # Export to Files
 
 upper_plate.export_to_file("upper_plate_capacitor.txt")
 lower_plate.export_to_file("lower_plate_capacitor.txt")
+
+dielectric.export_to_file("plate_capacitor_dielectric.txt")
+
+with open("upper_plate_capcaitor_diel.txt","a") as f:
+    f.write(upper_plate.bottom_face.prep_export_string())
+
+with open("lowerer_plate_capcaitor_diel.txt","a") as f:
+    f.write(lower_plate.top_face.prep_export_string())

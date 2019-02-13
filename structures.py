@@ -449,20 +449,21 @@ class IdtLowerStructure(IdtTranslation):
                       for n in range(self.elec_cnt-1)]
         return final_list
 
-    def prep_blender_data(self):
+    def prep_blender_data(self, use_export_faces=False):
         exp_corners = []
         exp_faces = []
         start_index = 0
+        get_faces_method = "fields_to_export"
 
         # First prepare elecrodes
         for elec in self.electrodes:
-            corners, faces = elec.prep_blender_data(start_index=start_index, diff_faces=elec.fields_to_export())
+            corners, faces = elec.prep_blender_data(start_index=start_index)
             exp_corners.extend(corners)
             exp_faces.extend(faces)
             start_index = faces[-1][-1] + 1
         # Now prepare base
 
-        corners, faces = self.base.prep_blender_data(start_index=start_index, diff_faces=self.base.fields_to_export())
+        corners, faces = self.base.prep_blender_data(start_index=start_index)
         exp_corners.extend(corners)
         exp_faces.extend(faces)
         return exp_corners, exp_faces
