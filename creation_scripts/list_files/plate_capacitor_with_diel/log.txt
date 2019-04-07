@@ -1,0 +1,10 @@
+
+
+
+Purpose:    Test a Capacitor 1x1 meters 0.001m height with seperation distance of 0.1m and a dielectric medium between
+            with an epsilon of 3.9.
+
+Created:    by plate_capacitor.py
+
+Results:
+    File:   results_plate_cap_with_diel.txt

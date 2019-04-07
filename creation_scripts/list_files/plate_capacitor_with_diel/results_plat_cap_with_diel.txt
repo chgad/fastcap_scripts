@@ -1,0 +1,66 @@
+Running /home/christian/bachelor/code/FastCap2/bin/fastcap 2.0wr (18Sep92, rev 070714)
+  Input: capacitor.lst
+Surface lower_plate_capacitor.txt has 5 quads and 0 tris
+Surface lower_plate_capacitor_diel.txt has 1 quads and 0 tris
+Surface upper_plate_capacitor.txt has 5 quads and 0 tris
+Surface upper_plate_capacitor_diel.txt has 1 quads and 0 tris
+Surface plate_capacitor_dielectric.txt has 4 quads and 0 tris
+  Input surfaces:
+   GROUP1
+    lower_plate_capacitor.txt, conductor
+      title: `PLATE_CAP_WITH_DIEL'
+      outer permittivity: 1
+      number of panels: 5
+      number of extra evaluation points: 0
+      translation: (0 0 0)
+    lower_plate_capacitor_diel.txt, conductor
+      title: `PLATE_CAP_WITH_DIEL'
+      outer permittivity: 3.9
+      number of panels: 1
+      number of extra evaluation points: 0
+      translation: (0 0 0)
+   GROUP2
+    upper_plate_capacitor.txt, conductor
+      title: `PLATE_CAP_WITH_DIEL'
+      outer permittivity: 1
+      number of panels: 5
+      number of extra evaluation points: 0
+      translation: (0 0 0)
+    upper_plate_capacitor_diel.txt, conductor
+      title: `PLATE_CAP_WITH_DIEL'
+      outer permittivity: 3.9
+      number of panels: 1
+      number of extra evaluation points: 0
+      translation: (0 0 0)
+   GROUP3
+    plate_capacitor_dielectric.txt, dielectric interface
+      title: `PLATE_CAP_WITH_DIEL'
+      permittivities: 3.9 (inner) 1 (outer)
+      number of panels: 4
+      number of extra evaluation points: 8
+      translation: (0 0 0)
+  Date: Tue Feb 12 13:39:54 2019
+  Host: christian-pc
+
+INPUT SUMMARY
+  Expansion order: 2
+  Number of partitioning levels: 3
+  Overall permittivity factor: 1
+  Total number of panels: 16
+    Number of conductor panels: 12
+    Number of dielectric interface panels: 4
+    Number of thin conductor on dielectric interface panels: 0
+  Number of conductors: 2
+No expansions at level 3 (lowest)
+Percentage of multiplies done by multipole: 44.4%
+
+ITERATION DATA
+Starting on column 1 (LOWER%GROUP1)
+1 2 3 4 
+Starting on column 2 (UPPER%GROUP2)
+1 2 3 4 
+
+CAPACITANCE MATRIX, nanofarads
+                       1          2 
+LOWER%GROUP1 1     0.3739    -0.3509
+UPPER%GROUP2 2    -0.3509     0.3739

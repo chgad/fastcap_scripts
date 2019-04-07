@@ -1,0 +1,20 @@
+Purpose:
+The idea behind this is that by starting with a structure of (all-in-all) 3 electrodes,
+ simulate/discretize it till convergence, we can divide the result by the number of electrode pairs and retrieve
+the capacitance per electrode pair.
+By then increasing the elctrode count we should, best case, see a kind of convergence for this value.
+The reason for this hypothesis is that by increasing the structure the influence of the boundary electrodes gets smaller
+and hence the capacitance per electrode pair should converge.
+
+With a possible result we are able to give a pretty good estimate for the actual capacitance of the real structure.
+
+
+
+State of the art 01.03.2019:
+
+It seems evident that the dimensinality (length to width) of the structure plays a big role in the accomplishment of
+convergence. Due to this fact the idea rises to repeat the same process first for electrode_length and then (or simultaniously)
+with electrode length.
+
+These results, for the electrode length influence on the capacity, are stored in "results_elec_length_increase" directory.
+

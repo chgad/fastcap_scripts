@@ -1,0 +1,24 @@
+*
+* epsilon_sio2 = 3.9 taken from https://www.eesemi.com/sio2si3n4.htm on 28.01.2019
+* epsilon_al2o3 = 11.5 taken from http://mt-berlin.com/frames_cryst/descriptions/sapphire.htm 28.01.2019
+*
+*
+* IDT lower part
+
+C idt_lower_cond_air.txt 1.0  0.0 0.0 0.0 +
+C idt_lower_cond_diel.txt 3.9  0.0 0.0 0.0
+
+* IDT uper part
+
+C idt_upper_cond_air.txt 1.0  0.0 0.0 0.0 +
+C idt_upper_cond_diel.txt 3.9  0.0 0.0 0.0
+
+* SiO2 layer
+
+D dielectric.txt 1.0 3.9  0.0 0.0 0.0  0.0 0.0 100.0
+
+* Si layer
+
+* C si_substrate_cond_air.txt 1.0  0.0 0.0 0.0 +
+* C si_substrate_cond_diel.txt 3.9  0.0 0.0 0.0
+

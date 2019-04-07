@@ -1,0 +1,41 @@
+Running /home/christian/bachelor/code/FastCap2/bin/fastcap 2.0wr (18Sep92, rev 070714)
+  Input: idt_on_si_o2.lst
+Surface idt_lower_cond_air.txt has 550 quads and 0 tris
+Surface dielectric.txt has 150 quads and 0 tris
+  Input surfaces:
+   GROUP1
+    idt_lower_cond_air.txt, conductor
+      title: `DUMMY_LOWER_ABOVE_DIEL'
+      outer permittivity: 1
+      number of panels: 550
+      number of extra evaluation points: 0
+      translation: (0 0 0)
+   GROUP2
+    dielectric.txt, dielectric interface
+      title: `DUMMY_LOWER_ABOVE_DIEL'
+      permittivities: 3.9 (inner) 1 (outer)
+      number of panels: 150
+      number of extra evaluation points: 300
+      translation: (0 0 0)
+  Date: Tue Feb 12 11:47:05 2019
+  Host: christian-pc
+
+INPUT SUMMARY
+  Expansion order: 2
+  Number of partitioning levels: 5
+  Overall permittivity factor: 1
+  Total number of panels: 700
+    Number of conductor panels: 550
+    Number of dielectric interface panels: 150
+    Number of thin conductor on dielectric interface panels: 0
+  Number of conductors: 1
+No expansions at level 5 (lowest)
+Percentage of multiplies done by multipole: 91.6%
+
+ITERATION DATA
+Starting on column 1 (Lower%GROUP1)
+1 2 3 4 5 6 7 
+
+CAPACITANCE MATRIX, nanofarads
+                       1 
+Lower%GROUP1 1     0.4065

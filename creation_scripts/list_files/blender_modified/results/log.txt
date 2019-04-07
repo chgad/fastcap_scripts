@@ -1,0 +1,536 @@
+-------
+
+Author: Christian Grossmüller
+Purpose: Exploring FastCap2 function
+
+Resultfiles:
+
+- results_structure_only_to_air.txt
+- dummy_structure_only_subdivides.txt
+
+-------
+
+Further explanations:
+
+-------
+
+    * File : results_structure_only_to_air.txt
+
+        Here I performed a test of the real strucutre with parameters
+
+        idt_height = 1 (not real; real value = 0.11)
+        elec_cnt = 41
+        elec_length = 139
+        elec_width = 1.35
+        elec_sep = 1.65
+        base_length = 20.41
+        substrate_length = 500
+        substrate_width = 500
+        si_o2_height = 0.2
+
+        and
+        modify = False
+
+    * File: dummy_structure_only_subdivides.txt
+
+        Here i performed a test of the lowest, simplest working example of the real structure with parameters
+
+        idt_height = 1
+
+        elec_cnt = 2
+        elec_length = 5
+        elec_width = 1
+        elec_sep = 2
+
+        base_length = 3
+
+        substrate_length = 20
+        substrate_width = 20
+        si_o2_height = 4
+
+        and
+
+        modify = True
+        insets = 0
+        subdivides = 4
+
+        IDT_STRUCT 1.1 times above Dielectric
+
+    * File: results_strucutre_1.1_height_above_diel.txt
+
+        Real structure 1.1 tiems si_o2 height above dielectric.
+
+        idt_height = 0.110
+
+        elec_cnt = 41
+        elec_length = 139
+        elec_width = 1.35
+        elec_sep = 1.65
+
+        base_length = 20.41
+
+        substrate_length = 500  # 10000
+        substrate_width = 500  # 10000
+        si_o2_height = 0.2
+
+        modify = True
+        export = True
+        subdivide_all = False
+        insets = 0
+        subdivides = 4
+
+    * File : NOT EXISTENT
+        --> Not working .... KILLED!
+
+
+        idt_height = 0.110
+
+        elec_cnt = 21
+        elec_length = 139
+        elec_width = 1.35
+        elec_sep = 1.65
+
+        base_length = 20.41
+
+        # idt_structure_height = 0.110
+
+        substrate_length = 500  # 10000
+        substrate_width = 500  # 10000
+        si_o2_height = 0.2
+
+        modify = True
+        export = True
+        subdivide_all = False
+        insets = 0
+        subdivides = 5
+
+        IDT_STRUCT 2.0 times above Dielectric
+
+    * File: results_structure_not_converging.txt
+
+        idt_height = 1
+
+        idt_height = 0.110
+
+        elec_cnt = 41
+        elec_length = 139
+        elec_width = 1.35
+        elec_sep = 1.65
+
+        base_length = 20.41
+
+        substrate_length = 500  # 10000
+        substrate_width = 500  # 10000
+        si_o2_height = 0.2
+        min_value = idt_height
+
+        modify = True
+        export = True
+        subdivide_all = False
+        insets = 2
+        subdivides = 2
+
+        IDT_STRUCT 2.0 times above Dielectric
+        Comment: NOT CONVERGING, RAM fully occupied and aroung 25% of SWAP
+
+    * File: dummy00_on_diel_only_top_face.txt
+
+            idt_height = 1
+
+            elec_cnt = 2
+            elec_length = 5
+            elec_width = 1
+            elec_sep = 2
+
+            base_length = 3
+
+            substrate_length = 20
+            substrate_width = 20
+            si_o2_height = 4
+            min_value = idt_height
+
+            modify = True
+            export = True
+            subdivide_all = False
+            insets = 1
+            subdivides = 1
+
+        Comment: Structure is on the Diel, but only the Top of the Diel is present --> No closed Diel-body
+
+    * File: dummy01_on_diel_only_top_face.txt
+
+            idt_height = 1
+
+            elec_cnt = 2
+            elec_length = 50
+            elec_width = 10
+            elec_sep = 20
+
+            base_length = 30
+
+            substrate_length = 200
+            substrate_width = 200
+            si_o2_height = 40
+            min_value = idt_height
+
+            modify = True
+            export = True
+            subdivide_all = False
+            insets = 1
+            subdivides = 1
+
+        Convergence met, but with non-negative off diagaonals
+
+        Comment: Structure parameters ~*10 to avoid round-off-errors with idt_height (0.11 not representable)
+                 --> Looks like aspect ratio is a problem
+
+    * File : dummy02_on_diel_only_top_face.txt
+
+            idt_height = 1
+
+            elec_cnt = 2
+            elec_length = 50
+            elec_width = 10
+            elec_sep = 20
+
+            base_length = 30
+
+            substrate_length = 200
+            substrate_width = 200
+            si_o2_height = 40
+            min_value = idt_height
+            dummy = True
+            modify = True
+            export = True
+            subdivide_all = False
+            insets = 2
+            subdivides = 4
+        Structure parameters ~*10
+        Comment: NOT CONVERGING
+
+
+    * File : dummy03_on_diel_only_top_face.txt
+
+            idt_height = 1
+
+            elec_cnt = 2
+            elec_length = 50
+            elec_width = 10
+            elec_sep = 20
+
+            base_length = 30
+
+            substrate_length = 200
+            substrate_width = 200
+            si_o2_height = 40
+            min_value = idt_height
+            dummy = True
+            modify = True
+            export = True
+            subdivide_all = False
+            insets = 1
+            subdivides = 4
+
+        Structure parameters ~*10
+        Convergence met, but with non-negative off diagaonals
+        Comment: seems like the inset(s) ruin smth.
+
+    * File : dummy04_on_diel_only_top_face.txt
+
+            idt_height = 1
+
+            elec_cnt = 2
+            elec_length = 50
+            elec_width = 10
+            elec_sep = 20
+
+            base_length = 30
+
+            substrate_length = 200
+            substrate_width = 200
+            si_o2_height = 40
+            min_value = idt_height
+            dummy = True
+            modify = True
+            export = True
+            subdivide_all = False
+            insets = 0
+            subdivides = 4
+
+            Convergence met
+
+        Structure parameters ~*10
+        Comment: seems like the insets with `0.1*min_value` kill it.
+
+    * File : dummy05_on_diel_only_top_face.txt
+
+            idt_height = 1
+
+            elec_cnt = 2
+            elec_length = 50
+            elec_width = 10
+            elec_sep = 20
+
+            base_length = 30
+
+            substrate_length = 200
+            substrate_width = 200
+            si_o2_height = 40
+            min_value = idt_height
+            dummy = True
+            modify = True
+            export = True
+            subdivide_all = False
+            insets = 0
+            subdivides = 8
+
+    * File : dummy06_on_diel_only_top_face.txt
+
+            idt_height = 0.1
+
+            elec_cnt = 2
+            elec_length = 5
+            elec_width = 1
+            elec_sep = 2
+
+            base_length = 3
+
+            substrate_length = 20
+            substrate_width = 20
+            si_o2_height = 4
+            min_value = idt_height
+            dummy = True
+            modify = True
+            export = True
+            subdivide_all = False
+            insets = 0
+            subdivides = 8
+
+            Comment: back scaling, if Convergence is met it's another idicator that the flaw lies within the insets
+                ---> Convergence met
+
+    * File : dummy07_on_diel_only_top_face.txt
+
+            idt_height = 0.1
+
+            elec_cnt = 4
+            elec_length = 5
+            elec_width = 1
+            elec_sep = 2
+
+            base_length = 3
+
+            substrate_length = 20
+            substrate_width = 20
+            si_o2_height = 4
+            min_value = idt_height
+            dummy = True
+            modify = True
+            export = True
+            subdivide_all = False
+            insets = 0
+            subdivides = 8
+
+            Convergence met
+
+            Comment: Reasonable output ~2x bigger capacitance than with dummy06_on_diel_only_top_face.txt
+
+    * File : xxx.txt
+
+            idt_height = 0.1
+
+            elec_cnt = 4
+            elec_length = 5
+            elec_width = 1
+            elec_sep = 2
+
+            base_length = 3
+
+            substrate_length = 200
+            substrate_width = 200
+            si_o2_height = 4
+            min_value = idt_height
+            dummy = True
+            modify = True
+            export = True
+            subdivide_all = False
+            insets = 0
+            subdivides = 8
+
+            Comment: Enlarge dielectric surface.
+                ---> no output created due to no convergence and impatience
+
+    * File : dummy08_on_diel_only_top_face.txt
+
+            idt_height = 1
+
+            elec_cnt = 40
+            elec_length = 50
+            elec_width = 10
+            elec_sep = 20
+
+            base_length = 30
+
+            substrate_length = 200
+            substrate_width = 200
+            si_o2_height = 4
+            min_value = idt_height
+            dummy = True
+            modify = True
+            export = True
+            subdivide_all = False
+            insets = 0
+            subdivides = 8
+
+            Convergence met
+
+            Comment: Rescale lenghts/widths to check if it is a problem of "relative sizes"
+                ---> Hypothesis : Dielectric surface may not be of orders bigger that the structure.
+
+    * File : real00_on_diel_only_top_face.txt
+
+            idt_height = 1
+
+            elec_cnt = 41
+            elec_length = 1390
+            elec_width = 13.5
+            elec_sep = 16.5
+
+            base_length = 204
+
+            substrate_length = 1.25*structure_length
+            substrate_width = 1.25*structure_width
+            si_o2_height = 2
+            min_value = idt_height
+
+            dummy = False
+            modify = True
+            export = True
+            subdivide_all = False
+            insets = 0
+            subdivides = 0
+
+            NO CONVERGENCE
+
+    * File : real01_on_diel_only_top_face.txt
+
+            idt_height = 0.11
+
+            elec_cnt = 21
+            elec_length = 139
+            elec_width = 1.35
+            elec_sep = 1.65
+
+            base_length = 20.41
+
+            substrate_length = 1.25*structure_length
+            substrate_width = 1.25*structure_width
+            si_o2_height = 2
+            min_value = idt_height
+
+            dummy = False
+            modify = True
+            export = True
+            subdivide_all = False
+            insets = 0
+            subdivides = 4
+
+            Comment: Half of real electrode count
+
+    * File : half_idt_6_subdivides.txt
+
+            idt_height = 0.11
+
+            elec_cnt = 21
+            elec_length = 139
+            elec_width = 1.35
+            elec_sep = 1.65
+
+            base_length = 20.41
+
+            substrate_length = 1.25*structure_length
+            substrate_width = 1.25*structure_width
+            si_o2_height = 2
+            min_value = idt_height
+
+            dummy = False
+            modify = True
+            export = True
+            subdivide_all = False
+            insets = 0
+            subdivides = 6
+
+            Comment: Half of real electrode count
+
+    * File : half_idt_8_subdivides.txt
+
+            idt_height = 0.11
+
+            elec_cnt = 21
+            elec_length = 139
+            elec_width = 1.35
+            elec_sep = 1.65
+
+            base_length = 20.41
+
+            substrate_length = 1.25*structure_length
+            substrate_width = 1.25*structure_width
+            si_o2_height = 2
+            min_value = idt_height
+
+            dummy = False
+            modify = True
+            export = True
+            subdivide_all = False
+            insets = 0
+            subdivides = 6
+
+            Comment: Half of real electrode count
+
+    * File : real02_on_diel_only_top_face.txt
+
+            idt_height = 0.11
+
+            elec_cnt = 11
+            elec_length = 139
+            elec_width = 1.35
+            elec_sep = 1.65
+
+            base_length = 20.41
+
+            substrate_length = 1.25*structure_length
+            substrate_width = 1.25*structure_width
+            si_o2_height = 2
+            min_value = idt_height
+
+            dummy = False
+            modify = True
+            export = True
+            subdivide_all = False
+            insets = 0
+            subdivides = 4
+
+            Comment: quarter of real electrode count
+
+    * File : real01_FasterCap_on_diel_only_top.txt
+
+        Comment: Same parameters as real01_on_diel_only_top.txt
+                 But FasterCap used instead of FastCap2
+
+        Discussion/Comparison of results:
+
+        FastCap2 result: 0.457 micro Farads * 10^-6 ==> 457 femto Farads
+        FasterCap result: 1.28 * 10^-7 * 10^-6 ==> 128 femto Farads
+
+        Notes:
+        1. Obviously those results differ from eachother by roughly the factor 4.
+        2. Furthermore it needs to be noted that FasterCap remesehd the ca. 26000 panels within the first step into
+           ca. 1.2*10^6 panels.
+        3. The FasterCap result seems to be consistent with a previous (not documented) result for the whole structure which was
+           249 femto Farads (~2x 128 femto Farads, for structure which is 2x this one)
+
+        Conclusion: Sadly the results do not match each other.
+
+        The first Note makes clear that they do not differ by a possibly reasonable accuracy (10-50%).
+        The second Note states that it's questionable wether the FastCap2 calculation truly converged since the first calculation of
+        FasterCap (~1.2 mio panels) did NOT converge. (First calculation without Warnings # panels = 1.45 *10^6).

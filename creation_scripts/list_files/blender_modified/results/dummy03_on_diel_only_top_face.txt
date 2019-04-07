@@ -1,0 +1,86 @@
+Running /home/christian/bachelor/code/FastCap2/bin/fastcap 2.0wr (18Sep92, rev 070714)
+  Input: idt_on_si_o2.lst
+Surface idt_lower_cond_air.txt has 551 quads and 0 tris
+Surface idt_lower_cond_diel.txt has 87 quads and 0 tris
+Surface idt_upper_cond_air.txt has 377 quads and 0 tris
+Surface idt_upper_cond_diel.txt has 58 quads and 0 tris
+Surface dielectric.txt has 319 quads and 0 tris
+  Input surfaces:
+   GROUP1
+    idt_lower_cond_air.txt, conductor
+      title: `Dummy_Only_top_diel'
+      outer permittivity: 1
+      number of panels: 551
+      number of extra evaluation points: 0
+      translation: (0 0 0)
+    idt_lower_cond_diel.txt, conductor
+      title: `Dummy_Only_top_diel'
+      outer permittivity: 3.9
+      number of panels: 87
+      number of extra evaluation points: 0
+      translation: (0 0 0)
+   GROUP2
+    idt_upper_cond_air.txt, conductor
+      title: `Dummy_Only_top_diel'
+      outer permittivity: 1
+      number of panels: 377
+      number of extra evaluation points: 0
+      translation: (0 0 0)
+    idt_upper_cond_diel.txt, conductor
+      title: `Dummy_Only_top_diel'
+      outer permittivity: 3.9
+      number of panels: 58
+      number of extra evaluation points: 0
+      translation: (0 0 0)
+   GROUP3
+    dielectric.txt, dielectric interface
+      title: `Dummy_Only_top_diel'
+      permittivities: 3.9 (inner) 1 (outer)
+      number of panels: 319
+      number of extra evaluation points: 638
+      translation: (0 0 0)
+  Date: Wed Feb 20 11:55:51 2019
+  Host: christian-pc
+
+INPUT SUMMARY
+  Expansion order: 2
+  Number of partitioning levels: 6
+  Overall permittivity factor: 1
+  Total number of panels: 1392
+    Number of conductor panels: 1073
+    Number of dielectric interface panels: 319
+    Number of thin conductor on dielectric interface panels: 0
+  Number of conductors: 2
+Percentage of multiplies done by multipole: 96.3%
+
+ITERATION DATA
+Starting on column 1 (Lower%GROUP1)
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 
+16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 
+31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 
+46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 
+61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 
+76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 
+91 92 93 94 95 96 97 98 99 100 101 102 103 104 105 
+106 107 108 109 110 111 112 113 114 115 116 117 118 119 120 
+121 122 123 124 125 126 127 128 129 130 131 132 133 134 135 
+136 137 138 139 140 141 142 143 144 145 146 147 148 149 150 
+151 152 153 154 
+Starting on column 2 (Upper%GROUP2)
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 
+16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 
+31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 
+46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 
+61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 
+76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 
+91 92 93 94 95 96 97 98 99 100 101 102 103 104 105 
+106 107 108 109 110 111 112 113 114 115 116 117 118 119 120 
+121 122 123 124 125 126 127 128 129 130 131 132 133 134 135 
+136 137 138 139 140 141 142 143 144 145 146 147 148 149 150 
+151 152 153 154 155 156 157 158 159 160 161 162 163 164 165 
+166 167 168 169 170 171 172 173 174 
+
+CAPACITANCE MATRIX, nanofarads
+                       1          2 
+Lower%GROUP1 1      51.01       32.7
+Upper%GROUP2 2       32.7      12.63
