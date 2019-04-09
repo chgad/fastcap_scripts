@@ -1,191 +1,64 @@
-from faces import GeomFace, GeomFaceList
-from structures import Cuboid, LowerBaseStructure, UpperBaseStructure, IdtLowerStructure, IdtUpperStructure, SiO2Layer, FastCapCuboid
+from create_idt_structure import create_idt_structure, prepare_visualization_data
 import numpy as np
 import bpy
-import time
-
-dummy = False
-modify = False
-export = False
-subdivide_all = False
-insets = 0
-subdivides = 5
-
-title = "0  Dummy_Only_top_diel\n"
-
-if dummy:
-    idt_height = 1
-
-    elec_cnt = 4
-    elec_length = 50
-    elec_width = 10
-    elec_sep = 20
-
-    base_length = 30
-
-    substrate_length = 200
-    substrate_width = 200
-    si_o2_height = 4
-    min_value = idt_height
-
-if not dummy:
-    # all entries resembel micrometer scale
-    # results must be muliplied by 10^-6 for real values
-    idt_height = 0.11
-
-    elec_cnt = 21
-    elec_length = 139
-    elec_width = 1.35
-    elec_sep = 1.65
-
-    base_length = 20.41
-
-    # idt_structure_height = 0.110
-
-    substrate_length = 500  # 10000
-    substrate_width = 500  # 10000
-    si_o2_height = 2
-    min_value = idt_height
 
 
-def list_electrode_prep_blender_data(cuboid_list, face_name):
+def create_materials(file_dict):
+    """
+    Dynamically creates Blender Material-objects from a provided file dictionary.
+    The file dictionary is expected to be :
+    {
+        "<Material Name>": "<File Name for Interfaces of Material>"
+    }
 
-    exp_vertices =[]
-    exp_faces = []
-    start_index = 0
-    for cuboid in cuboid_list:
-        face_obj = getattr(cuboid, face_name)
-        vertices, face = face_obj.prep_blender_data(start_index)
-        exp_vertices.extend(vertices)
-        exp_faces.append(face)
-        start_index += 4
+    The Function returns a Dictionary of kind :
 
-    return exp_vertices, exp_faces
+    {
+        "<Material Name>": Material Object
+    }
 
-# base_lower = LowerBaseStructure(elec_width=elec_width, elec_sep=elec_sep, elec_cnt=elec_cnt,
-#                                 length=length, width=width, height=height,
-#                                 omit_faces=["bottom_face"])
-
-# base_upper = UpperBaseStructure(elec_width=elec_width, elec_sep=elec_sep, elec_cnt=elec_cnt-1,
-#                                length=length, width=width, height=height,
-#                                omit_faces=["bottom_face"])
-
-idt_lower = IdtLowerStructure(elec_length=elec_length, elec_width=elec_width, elec_sep=elec_sep,
-                              elec_cnt=elec_cnt, base_length=base_length, height=idt_height)
-
-idt_upper = IdtUpperStructure(elec_length=elec_length, elec_width=elec_width, elec_sep=elec_sep,
-                              elec_cnt=elec_cnt-1, base_length=base_length, height=idt_height)
-
-si_o2_length = elec_sep + 2* idt_upper.base_length + elec_length
-si_o2_width = idt_upper.base_width
-
-# Fix so that Dielectric top Face is not of orders greater than the structure
-
-substrate_width = 1.25 * si_o2_width
-substrate_length = 1.25 * si_o2_length
-
-si_o2 = SiO2Layer(structure_length=si_o2_length, structure_width=si_o2_width, length=substrate_length,
-                  width=substrate_width, height=si_o2_height)
+    :param file_dict:
+    :return: Dict
+    """
+    _dict = {}
+    for material in file_dict:
+        material_object = bpy.data.materials.new(name=material)
+        material_object.diffuse_color = tuple(
+            np.random.choice(np.linspace(0, 1, 6), size=3)
+        )
+        _dict[material] = material_object
+    return _dict
 
 
-idt_structure_length = elec_sep + 2 * idt_upper.base_length + elec_length
-idt_structure_width = idt_lower.base_width
-
-# Alignment translation to position the IDT structure in the middle of the Substrate
-
-align_idt_vector = np.array([0.5*(substrate_width - idt_structure_width),
-                             0.5 * (substrate_length - idt_structure_length),
-                             0.0])
-
-idt_upper + np.array([0.0, elec_length + elec_sep + idt_lower.base_length, 0.0])
-idt_lower + align_idt_vector
-idt_upper + align_idt_vector
-
-si_o2 - np.array([0.0, 0.0, si_o2.height])
-
-# To be simplified after succesful simulation
-
-lower_elec_data = list_electrode_prep_blender_data(idt_lower.electrodes, "bottom_face")
-
-upper_elec_data = list_electrode_prep_blender_data(idt_upper.electrodes, "bottom_face")
-
-lower_base_bottom_verts, lower_face = idt_lower.base.bottom_face.prep_blender_data()
-upper_base_bottom_verts, upper_face = idt_upper.base.bottom_face.prep_blender_data()
-
-upper_base_bottom_data = (upper_base_bottom_verts, [upper_face,])
-lower_base_bottom_data = (lower_base_bottom_verts, [lower_face,])
-
-upper_data = idt_upper.prep_blender_data()
-
-lower_data = idt_lower.prep_blender_data()
-
-diel_upper_data = idt_upper.diel_faces.prep_blender_data()
-
-diel_lower_data = idt_lower.diel_faces.prep_blender_data()
-
-sio2_data = si_o2.top_face.prep_blender_data()
-
-objects = {
-    "IDT_UPPER": upper_data,
-    "IDT_LOWER": lower_data,
-    "BASE_BOTTOM_UPPER": upper_base_bottom_data,
-    "BASE_BOTTOM_LOWER": lower_base_bottom_data,
-    "ELEC_UPPER": upper_elec_data,
-    "ELEC_LOWER": lower_elec_data,
-    "DIEL_UPPER": diel_upper_data,
-    "DIEL_LOWER": diel_lower_data,
-    "SI_O2": sio2_data
-}
-
-# Material - file_name Dictionary
-
-mat_file_name_dict = {
-    "Conductor Air Upper": "idt_upper_cond_air.txt",
-    "Conductor Air Lower": "idt_lower_cond_air.txt",
-    "Dielectric": "dielectric.txt",
-    "Conductor Dielectric Upper": "idt_upper_cond_diel.txt",
-    "Conductor Dielectric Lower": "idt_lower_cond_diel.txt"
-}
-
-mat_one = bpy.data.materials.new(name="Conductor Air Upper")
-mat_one.diffuse_color = (0.0, 0.0, 1.0)  # Blue
-mat_two = bpy.data.materials.new(name="Conductor Air Lower")
-mat_two.diffuse_color = (0.0, 0.5, 0.5)
-
-mat_three = bpy.data.materials.new(name="Conductor Dielectric Upper")
-mat_three.diffuse_color = (1.0, 0.0, 0.0)  # Red
-mat_four = bpy.data.materials.new(name="Conductor Dielectric Lower")
-mat_four.diffuse_color = (0.5, 0.5, 0.0)
-
-mat_five = bpy.data.materials.new(name="Dielectric")
-mat_five.diffuse_color = (0.0, 1.0, 0.0)  # Green
-
-for name, tpl in objects.items():
-    #
-    # mat = mat_one
-    # if name.endswith("LOWER"):
-    #     mat = mat_two
-    #
-    # if name.startswith("SI_O2"):
-    #     mat = mat_five
-    mat = mat_two
+def retrieve_current_material(name, material_dict):
 
     if name.startswith("IDT"):
         if name.endswith("UPPER"):
-            mat = mat_one
+            return material_dict.get("Conductor Air Upper")
         else:
-            mat = mat_two
+            return material_dict.get("Conductor Air Lower")
 
     elif name.startswith("ELEC") or name.startswith("BASE_BOTTOM"):
         if name.endswith("UPPER"):
-            mat = mat_three
+            return material_dict.get("Conductor Dielectric Upper")
         else:
-            mat = mat_four
+            return material_dict.get("Conductor Dielectric Lower")
     else:
-        mat = mat_five
+        return material_dict.get("Dielectric")
+
+
+def load_blender_data(name, verts_face_tuple, material_dict):
+    """
+    This Function loads the Python data into Blender.
+
+    :param name: Name of the Blender Meshobject
+    :param verts_face_tuple: Tuple consisting of Vertices Tuple and Tuple of Facetuples
+    :return: None
+    """
+    mat = retrieve_current_material(name, material_dict)
 
     mesh_data = bpy.data.meshes.new(name)
-    mesh_data.from_pydata(tpl[0], [], tpl[1])
+    mesh_data.from_pydata(verts_face_tuple[0], [], verts_face_tuple[1])
 
     obj = bpy.data.objects.new(name, mesh_data)
     obj.data.materials.append(mat)
@@ -194,38 +67,51 @@ for name, tpl in objects.items():
     bpy.context.scene.objects.active = obj
 
 
-if modify:
-    bpy.ops.object.select_all(action='SELECT')
+def blender_perform_modification(number_insets=0, number_subdivides=0, min_relative_thickness=0, subdivide_all=False):
+
+    """
+    Perform modification of the imported Blender objects.
+    We perform n insets, k subdivides to the most inner inset.
+    If subdivde_all is True we subdivide all faces.
+    To prevent resulting overlapping faces after performing insets we need to introduce
+    a min_relative_thickness. This enables us to perform 10 insets at most.
+
+    :param number_insets:
+    :param number_subdivides:
+    :param min_relative_thickness:
+    :param subdivide_all:
+    :return:
+    """
+    bpy.ops.object.select_all(action="SELECT")
     bpy.ops.object.join()
 
     bpy.ops.object.mode_set(mode="EDIT")
 
     bpy.ops.mesh.select_all(action="SELECT")
     bpy.ops.mesh.remove_doubles()
+    assert number_insets <= 10, "No more insets than 10 allowed"
 
-    for i in range(insets):
-        bpy.ops.mesh.inset(use_relative_offset=False,
-                           thickness=0.1*min_value,
-                           use_interpolate=True,
-                           use_individual=True)
-
-
+    for i in range(number_insets):
+        bpy.ops.mesh.inset(
+            use_relative_offset=False,
+            thickness=0.1 * min_relative_thickness,
+            use_interpolate=True,
+            use_individual=True,
+        )
     # only the last insets get divided
     if subdivide_all:
         bpy.ops.mesh.select_all(action="SELECT")
 
-    if subdivides:
-        bpy.ops.mesh.subdivide(number_cuts=subdivides)
-
+    if number_subdivides:
+        bpy.ops.mesh.subdivide(number_cuts=number_subdivides)
 
     bpy.ops.mesh.separate(type="MATERIAL")
     bpy.ops.object.mode_set(mode="OBJECT")
+    bpy.ops.object.select_all(action="DESELECT")
 
-bpy.ops.object.select_all(action="DESELECT")
 
+def blender_export_to_fastcap(material_filename_dict, title):
 
-# This should become a function
-if export:
     for obj in bpy.context.scene.objects:
         data = obj.data
         exp_str = title
@@ -246,10 +132,86 @@ if export:
         bpy.ops.object.delete(use_global=True)
 
         # we know that the objects only consist of one material
-        file_name = mat_file_name_dict[data.materials[0].name]
+        file_name = material_filename_dict[data.materials[0].name]
         with open(file_name, "a") as f:
             f.write(exp_str)
 
-    exit()
 
+if __name__ == "__main__":
+    dummy = True
+    modify = True
+    export = False
+    subdivide_all = False
+    insets = 0
+    subdivides = 5
 
+    title = "0  Dummy_Only_top_diel\n"
+
+    if dummy:
+        idt_height = 1
+
+        elec_cnt = 4
+        elec_length = 50
+        elec_width = 10
+        elec_sep = 20
+
+        base_length = 30
+
+        substrate_length = 200
+        substrate_width = 200
+        si_o2_height = 4
+        min_value = idt_height
+
+    if not dummy:
+        # all entries resemble micrometer scale
+        # results must be multiplied by 10^-6 for real values
+        idt_height = 0.11
+
+        elec_cnt = 21
+        elec_length = 139
+        elec_width = 1.35
+        elec_sep = 1.65
+
+        base_length = 20.41
+
+        # idt_structure_height = 0.110
+
+        si_o2_height = 2
+        min_value = idt_height
+
+    idt_structure_dict = create_idt_structure(
+        elec_length=elec_length,
+        elec_width=elec_width,
+        elec_sep=elec_sep,
+        elec_cnt=elec_cnt,
+        base_length=base_length,
+        idt_height=idt_height,
+        si_o2_height=si_o2_height,
+    )
+
+    object_data_dict = prepare_visualization_data(idt_structure_dict)
+    # Material - file_name Dictionary
+
+    mat_file_name_dict = {
+        "Conductor Air Upper": "idt_upper_cond_air.txt",
+        "Conductor Air Lower": "idt_lower_cond_air.txt",
+        "Dielectric": "dielectric.txt",
+        "Conductor Dielectric Upper": "idt_upper_cond_diel.txt",
+        "Conductor Dielectric Lower": "idt_lower_cond_diel.txt",
+    }
+
+    material_dict = create_materials(mat_file_name_dict)
+
+    for name, tpl in object_data_dict.items():
+
+        load_blender_data(name, tpl)
+
+    if modify:
+        blender_perform_modification(number_subdivides=subdivides, number_insets=insets, min_relative_thickness=min_value,
+                               subdivide_all=subdivide_all)
+
+    # This should become a function
+    if export:
+        blender_export_to_fastcap(mat_file_name_dict)
+
+        exit()
