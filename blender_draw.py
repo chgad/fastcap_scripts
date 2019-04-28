@@ -150,7 +150,7 @@ if __name__ == "__main__":
     export = True
     subdivide_all = False
     insets = 0
-    subdivides = 10
+    subdivides = 0
 
     title = "0  Dummy_Si_O2_cond_Si\n"
 
