@@ -1,12 +1,10 @@
-from create_idt_structure import create_idt_structure, prepare_visualization_data
+from create_idt_structure_classes import BlenderIDTonSiO2struct
 from blender_draw import create_materials, load_blender_data, blender_perform_modification, blender_export_to_fastcap
 import argparse
 import sys
+
 argv = sys.argv
 argv = argv[argv.index("--") + 1:]
-
-ap = argparse.ArgumentParser()
-
 
 
 elec_cnt = int(argv[0])
@@ -28,15 +26,15 @@ si_o2_height = 2
 min_value = idt_height
 
 mat_file_name_dict = {
-    "Conductor Air Upper": "test_dir/content_files/idt_upper_cond_air.txt",
-    "Conductor Air Lower": "test_dir/content_files/idt_lower_cond_air.txt",
-    "Dielectric": "test_dir/content_files/dielectric.txt",
-    "Conductor Dielectric Upper": "test_dir/content_files/idt_upper_cond_diel.txt",
-    "Conductor Dielectric Lower": "test_dir/content_files/idt_lower_cond_diel.txt",
+    "Conductor Air Upper": "approx_capacitance_per_elec/content_files/idt_upper_cond_air.txt",
+    "Conductor Air Lower": "approx_capacitance_per_elec/content_files/idt_lower_cond_air.txt",
+    "Dielectric": "approx_capacitance_per_elec/content_files/dielectric.txt",
+    "Conductor Dielectric Upper": "approx_capacitance_per_elec/content_files/idt_upper_cond_diel.txt",
+    "Conductor Dielectric Lower": "approx_capacitance_per_elec/content_files/idt_lower_cond_diel.txt",
 }
 title = "0  Dummy_Only_top_diel\n"
 
-idt_structure_dict = create_idt_structure(
+data_class = BlenderIDTonSiO2struct(
     elec_length=elec_length,
     elec_width=elec_width,
     elec_sep=elec_sep,
@@ -46,7 +44,7 @@ idt_structure_dict = create_idt_structure(
     si_o2_height=si_o2_height,
 )
 
-object_data_dict = prepare_visualization_data(idt_structure_dict)
+object_data_dict = data_class.blender_dict
 
 material_dict = create_materials(mat_file_name_dict)
 

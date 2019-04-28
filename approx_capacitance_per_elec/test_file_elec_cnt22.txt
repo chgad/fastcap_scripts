@@ -1,0 +1,92 @@
+Running FasterCap version 6.0.0
+Copyright 2017 FastFieldSolvers S.R.L. http://www.fastfieldsolvers.com, All Rights reserved
+Starting capacitance extraction with the following parameters:
+Input file: approx_capacitance_per_elec/content_files/idt_on_si_o2.lst
+Auto calculation with max error: 0.05
+Remark: Auto option overrides all other Manual settings
+
+3D Solver Engine invoked
+Solution scheme (-g): Collocation, GMRES tolerance (-t): 0.025
+Out-of-core free memory to link memory condition (-f): 5
+Potential interaction coefficient to mesh refinement ratio (-d): 1
+Mesh curvature (-mc): 3
+Number of input panels to solver engine: 13140480
+
+Iteration number #0 ***************************
+
+***************************************
+Refining the geometry.. 
+Refinement completed
+Mesh refinement (-m): 1e+32
+***************************************
+Computing the links.. 
+Number of panels after refinement: 13140480
+Number of links to be computed: 26281006
+Done computing links
+***************************************
+Precond Type(s) (-p): Jacobi 
+GMRES Iteration: 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 
+GMRES Iteration: 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 
+Capacitance matrix is:
+Dimension 2 x 2
+g1_1  -3.99381e-08 5.12895e-08 
+g2_1  4.42207e-08 -4.14867e-08 
+Warning: capacitance matrix has a non-negative off-diagonal element at row 1 col 2
+Warning: capacitance matrix has a non-negative off-diagonal element at row 2 col 1
+Warning: capacitance matrix is not diagonally dominant due to row 1
+Warning: capacitance matrix is not diagonally dominant due to row 2
+
+
+Solve statistics:
+Number of input panels: 145408 of which 111872 conductors and 33536 dielectric
+Number of input panels to solver engine: 13140480
+Number of panels after refinement: 13140480
+Number of potential estimates: 14224178
+Number of links: 39421486 (uncompressed 172672214630400, compression ratio is 100.0%)
+Max recursion level: 32
+Max Mesh relative refinement value: 0.000248298
+Iteration time: 249.307693s (0 days, 0 hours, 4 mins, 9 s)
+Iteration allocated memory: 8651678 kilobytes
+
+Iteration number #1 ***************************
+
+***************************************
+Increasing the geometric refinement.. 
+Delta in refined panel and link count w.r.t. previous iteration less than 10%
+(Panels # 13140484, Links # 26627700)
+Automatically increasing the refinement parameters
+Delta in refined panel and link count w.r.t. previous iteration less than 10%
+(Panels # 13142357, Links # 27194986)
+Automatically increasing the refinement parameters
+Delta in refined panel and link count w.r.t. previous iteration less than 10%
+(Panels # 13144109, Links # 28508510)
+Automatically increasing the refinement parameters
+Delta in refined panel and link count w.r.t. previous iteration less than 10%
+(Panels # 13147151, Links # 30645494)
+Automatically increasing the refinement parameters
+Delta in refined panel and link count w.r.t. previous iteration less than 10%
+(Panels # 13151971, Links # 34302182)
+Automatically increasing the refinement parameters
+Delta in refined panel and link count w.r.t. previous iteration less than 10%
+(Panels # 13161400, Links # 41324008)
+Automatically increasing the refinement parameters
+Delta in refined panel and link count w.r.t. previous iteration less than 10%
+(Panels # 13184383, Links # 55486566)
+Automatically increasing the refinement parameters
+Delta in refined panel and link count w.r.t. previous iteration less than 10%
+(Panels # 13231852, Links # 83547598)
+Automatically increasing the refinement parameters
+Delta in refined panel and link count w.r.t. previous iteration less than 10%
+(Panels # 13441909, Links # 137977782)
+Automatically increasing the refinement parameters
+Delta in refined panel and link count w.r.t. previous iteration less than 10%
+(Panels # 13658308, Links # 245351628)
+Automatically increasing the refinement parameters
+Refinement completed
+Mesh refinement (-m): 4.94552e-06
+***************************************
+Computing the links.. 
+Number of panels after refinement: 14890668
+Number of links to be computed: 484481924
+Done computing links
+************

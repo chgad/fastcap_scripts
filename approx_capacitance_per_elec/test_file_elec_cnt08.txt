@@ -1,0 +1,149 @@
+Running FasterCap version 6.0.0
+Copyright 2017 FastFieldSolvers S.R.L. http://www.fastfieldsolvers.com, All Rights reserved
+Starting capacitance extraction with the following parameters:
+Input file: approx_capacitance_per_elec/content_files/idt_on_si_o2.lst
+Auto calculation with max error: 0.05
+Remark: Auto option overrides all other Manual settings
+
+3D Solver Engine invoked
+Solution scheme (-g): Collocation, GMRES tolerance (-t): 0.025
+Out-of-core free memory to link memory condition (-f): 5
+Potential interaction coefficient to mesh refinement ratio (-d): 1
+Mesh curvature (-mc): 3
+Number of input panels to solver engine: 4631040
+
+Iteration number #0 ***************************
+
+***************************************
+Refining the geometry.. 
+Refinement completed
+Mesh refinement (-m): 1e+32
+***************************************
+Computing the links.. 
+Number of panels after refinement: 4631040
+Number of links to be computed: 9262080
+Done computing links
+***************************************
+Precond Type(s) (-p): Jacobi 
+GMRES Iteration: 0 1 2 3 4 5 6 7 8 9 10 11 12 
+GMRES Iteration: 0 1 2 3 4 5 6 7 8 9 10 11 12 
+Capacitance matrix is:
+Dimension 2 x 2
+g1_1  1.96856e-08 -1.45485e-08 
+g2_1  -1.22534e-08 1.9953e-08 
+
+
+Solve statistics:
+Number of input panels: 52224 of which 40192 conductors and 12032 dielectric
+Number of input panels to solver engine: 4631040
+Number of panels after refinement: 4631040
+Number of potential estimates: 5013140
+Number of links: 13893120 (uncompressed 21446531481600, compression ratio is 100.0%)
+Max recursion level: 30
+Max Mesh relative refinement value: 0.000626622
+Iteration time: 72.202019s (0 days, 0 hours, 1 mins, 12 s)
+Iteration allocated memory: 2901720 kilobytes
+
+Iteration number #1 ***************************
+
+***************************************
+Increasing the geometric refinement.. 
+Delta in refined panel and link count w.r.t. previous iteration less than 10%
+(Panels # 4631040, Links # 9354938)
+Automatically increasing the refinement parameters
+Delta in refined panel and link count w.r.t. previous iteration less than 10%
+(Panels # 4631824, Links # 9518338)
+Automatically increasing the refinement parameters
+Delta in refined panel and link count w.r.t. previous iteration less than 10%
+(Panels # 4632787, Links # 9956178)
+Automatically increasing the refinement parameters
+Delta in refined panel and link count w.r.t. previous iteration less than 10%
+(Panels # 4634656, Links # 10734518)
+Automatically increasing the refinement parameters
+Delta in refined panel and link count w.r.t. previous iteration less than 10%
+(Panels # 4636643, Links # 12104922)
+Automatically increasing the refinement parameters
+Delta in refined panel and link count w.r.t. previous iteration less than 10%
+(Panels # 4643165, Links # 14489306)
+Automatically increasing the refinement parameters
+Delta in refined panel and link count w.r.t. previous iteration less than 10%
+(Panels # 4657352, Links # 19414476)
+Automatically increasing the refinement parameters
+Delta in refined panel and link count w.r.t. previous iteration less than 10%
+(Panels # 4678304, Links # 30230984)
+Automatically increasing the refinement parameters
+Delta in refined panel and link count w.r.t. previous iteration less than 10%
+(Panels # 4740385, Links # 50427128)
+Automatically increasing the refinement parameters
+Delta in refined panel and link count w.r.t. previous iteration less than 10%
+(Panels # 4875788, Links # 93849924)
+Automatically increasing the refinement parameters
+Refinement completed
+Mesh refinement (-m): 1.32499e-05
+***************************************
+Computing the links.. 
+Number of panels after refinement: 5331357
+Number of links to be computed: 180477062
+Done computing links
+***************************************
+Precond Type(s) (-p): Jacobi 
+GMRES Iteration: 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 
+GMRES Iteration: 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 
+Capacitance matrix is:
+Dimension 2 x 2
+g1_1  4.93708e-08 -4.3631e-08 
+g2_1  -4.34589e-08 4.75792e-08 
+
+Weighted Frobenius norm of the difference between capacitance (auto option): 0.63862
+
+Solve statistics:
+Number of input panels: 52224 of which 40192 conductors and 12032 dielectric
+Number of input panels to solver engine: 4631040
+Number of panels after refinement: 5331357
+Number of potential estimates: 73267828
+Number of links: 185808419 (uncompressed 28423367461449, compression ratio is 100.0%)
+Max recursion level: 51
+Max Mesh relative refinement value: 1.32499e-05
+Iteration time: 366.823212s (0 days, 0 hours, 6 mins, 6 s)
+Iteration allocated memory: 6380058 kilobytes
+
+Iteration number #2 ***************************
+
+***************************************
+Increasing the geometric refinement.. 
+Delta in refined panel and link count w.r.t. previous iteration less than 10%
+(Panels # 5649870, Links # 328707952)
+Automatically increasing the refinement parameters
+Refinement completed
+Mesh refinement (-m): 6.62497e-06
+***************************************
+Computing the links.. 
+Number of panels after refinement: 6669341
+Number of links to be computed: 643741746
+Done computing links
+***************************************
+Precond Type(s) (-p): Jacobi 
+GMRES Iteration: 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 
+GMRES Iteration: 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 
+Capacitance matrix is:
+Dimension 2 x 2
+g1_1  4.8834e-08 -4.33429e-08 
+g2_1  -4.33937e-08 4.74356e-08 
+
+Weighted Frobenius norm of the difference between capacitance (auto option): 0.00686793
+
+Solve statistics:
+Number of input panels: 52224 of which 40192 conductors and 12032 dielectric
+Number of input panels to solver engine: 4631040
+Number of panels after refinement: 6669341
+Number of potential estimates: 190758805
+Number of links: 650411087 (uncompressed 44480109374281, compression ratio is 100.0%)
+Max recursion level: 55
+Max Mesh relative refinement value: 6.62496e-06
+Iteration time: 1071.170166s (0 days, 0 hours, 17 mins, 51 s)
+Iteration allocated memory: 14599429 kilobytes
+
+Total allocated memory: 14599429 kilobytes
+Total time: 430.778137s (0 days, 0 hours, 7 mins, 10 s)
+
+

@@ -1,4 +1,4 @@
-from create_idt_structure import create_idt_structure, prepare_visualization_data
+from create_idt_structure_classes import BlenderIDTonSiO2struct, BlenderIDTonSiO2AndSiStruct
 import numpy as np
 import bpy
 
@@ -43,9 +43,15 @@ def retrieve_current_material(name, material_dict):
             return material_dict.get("Conductor Dielectric Upper")
         else:
             return material_dict.get("Conductor Dielectric Lower")
+    elif name.startswith("SI"):
+        if name.endswith("TOP"):
+            return material_dict.get("Si Top")
+        elif name == "SI":
+            return material_dict.get("Si")
+        else:
+            return material_dict.get("Dielectric")
     else:
         return material_dict.get("Dielectric")
-
 
 def load_blender_data(name, verts_face_tuple, material_dict):
     """
@@ -111,9 +117,9 @@ def blender_perform_modification(number_insets=0, number_subdivides=0, min_relat
 
 
 def blender_export_to_fastcap(material_filename_dict, title):
-
     for obj in bpy.context.scene.objects:
         data = obj.data
+        assert data, "{}".format(obj)
         exp_str = title
         for face in data.polygons:
             face_verts = face.vertices
@@ -127,6 +133,7 @@ def blender_export_to_fastcap(material_filename_dict, title):
                 exp_str += "  {} {} {}".format(vert.x, vert.y, vert.z)
             exp_str += "\n"
 
+        assert len(data.materials) >= 1
         exp_str += "N  1  {}".format(data.materials[0].name.split(" ")[-1])
         bpy.ops.object.select_pattern(pattern=obj.name)
         bpy.ops.object.delete(use_global=True)
@@ -138,14 +145,14 @@ def blender_export_to_fastcap(material_filename_dict, title):
 
 
 if __name__ == "__main__":
-    dummy = True
+    dummy = False
     modify = True
-    export = False
+    export = True
     subdivide_all = False
     insets = 0
-    subdivides = 5
+    subdivides = 10
 
-    title = "0  Dummy_Only_top_diel\n"
+    title = "0  Dummy_Si_O2_cond_Si\n"
 
     if dummy:
         idt_height = 1
@@ -161,6 +168,7 @@ if __name__ == "__main__":
         substrate_width = 200
         si_o2_height = 4
         min_value = idt_height
+        si_height = 4
 
     if not dummy:
         # all entries resemble micrometer scale
@@ -178,8 +186,9 @@ if __name__ == "__main__":
 
         si_o2_height = 2
         min_value = idt_height
+        si_height = 10
 
-    idt_structure_dict = create_idt_structure(
+    data_class = BlenderIDTonSiO2AndSiStruct(
         elec_length=elec_length,
         elec_width=elec_width,
         elec_sep=elec_sep,
@@ -187,9 +196,10 @@ if __name__ == "__main__":
         base_length=base_length,
         idt_height=idt_height,
         si_o2_height=si_o2_height,
+        si_height=si_height
     )
 
-    object_data_dict = prepare_visualization_data(idt_structure_dict)
+    object_data_dict = data_class.blender_dict
     # Material - file_name Dictionary
 
     mat_file_name_dict = {
@@ -198,20 +208,24 @@ if __name__ == "__main__":
         "Dielectric": "dielectric.txt",
         "Conductor Dielectric Upper": "idt_upper_cond_diel.txt",
         "Conductor Dielectric Lower": "idt_lower_cond_diel.txt",
+        "Si Top": "si_top.txt",
+        "Si": "si_rest.txt"
     }
 
     material_dict = create_materials(mat_file_name_dict)
-
     for name, tpl in object_data_dict.items():
-
-        load_blender_data(name, tpl)
+        load_blender_data(name, tpl, material_dict)
 
     if modify:
-        blender_perform_modification(number_subdivides=subdivides, number_insets=insets, min_relative_thickness=min_value,
-                               subdivide_all=subdivide_all)
+        blender_perform_modification(
+            number_subdivides=subdivides,
+            number_insets=insets,
+            min_relative_thickness=min_value,
+            subdivide_all=subdivide_all
+        )
 
     # This should become a function
     if export:
-        blender_export_to_fastcap(mat_file_name_dict)
+        blender_export_to_fastcap(mat_file_name_dict, title=title)
 
         exit()

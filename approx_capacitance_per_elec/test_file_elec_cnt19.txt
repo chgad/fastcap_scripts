@@ -1,0 +1,93 @@
+Running FasterCap version 6.0.0
+Copyright 2017 FastFieldSolvers S.R.L. http://www.fastfieldsolvers.com, All Rights reserved
+Starting capacitance extraction with the following parameters:
+Input file: approx_capacitance_per_elec/content_files/idt_on_si_o2.lst
+Auto calculation with max error: 0.05
+Remark: Auto option overrides all other Manual settings
+
+3D Solver Engine invoked
+Solution scheme (-g): Collocation, GMRES tolerance (-t): 0.025
+Out-of-core free memory to link memory condition (-f): 5
+Potential interaction coefficient to mesh refinement ratio (-d): 1
+Mesh curvature (-mc): 3
+Number of input panels to solver engine: 11316736
+
+Iteration number #0 ***************************
+
+***************************************
+Refining the geometry.. 
+Refinement completed
+Mesh refinement (-m): 1e+32
+***************************************
+Computing the links.. 
+Number of panels after refinement: 11316736
+Number of links to be computed: 22633506
+Done computing links
+***************************************
+Precond Type(s) (-p): Jacobi 
+GMRES Iteration: 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 
+GMRES Iteration: 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 
+Capacitance matrix is:
+Dimension 2 x 2
+g1_1  -4.39667e-08 6.8413e-08 
+g2_1  5.09774e-08 -5.91915e-08 
+Warning: capacitance matrix has a non-negative off-diagonal element at row 1 col 2
+Warning: capacitance matrix has a non-negative off-diagonal element at row 2 col 1
+Warning: capacitance matrix is not diagonally dominant due to row 1
+
+
+Solve statistics:
+Number of input panels: 125440 of which 96512 conductors and 28928 dielectric
+Number of input panels to solver engine: 11316736
+Number of panels after refinement: 11316736
+Number of potential estimates: 12359918
+Number of links: 33950242 (uncompressed 128068513693696, compression ratio is 100.0%)
+Max recursion level: 32
+Max Mesh relative refinement value: 0.000314677
+Iteration time: 222.050354s (0 days, 0 hours, 3 mins, 42 s)
+Iteration allocated memory: 7444521 kilobytes
+
+Iteration number #1 ***************************
+
+***************************************
+Increasing the geometric refinement.. 
+Delta in refined panel and link count w.r.t. previous iteration less than 10%
+(Panels # 11316736, Links # 22855404)
+Automatically increasing the refinement parameters
+Delta in refined panel and link count w.r.t. previous iteration less than 10%
+(Panels # 11318525, Links # 23550808)
+Automatically increasing the refinement parameters
+Delta in refined panel and link count w.r.t. previous iteration less than 10%
+(Panels # 11320706, Links # 24729072)
+Automatically increasing the refinement parameters
+Delta in refined panel and link count w.r.t. previous iteration less than 10%
+(Panels # 11322923, Links # 26884632)
+Automatically increasing the refinement parameters
+Delta in refined panel and link count w.r.t. previous iteration less than 10%
+(Panels # 11328562, Links # 29993000)
+Automatically increasing the refinement parameters
+Delta in refined panel and link count w.r.t. previous iteration less than 10%
+(Panels # 11338788, Links # 36764002)
+Automatically increasing the refinement parameters
+Delta in refined panel and link count w.r.t. previous iteration less than 10%
+(Panels # 11371738, Links # 50201712)
+Automatically increasing the refinement parameters
+Delta in refined panel and link count w.r.t. previous iteration less than 10%
+(Panels # 11433941, Links # 77768662)
+Automatically increasing the refinement parameters
+Delta in refined panel and link count w.r.t. previous iteration less than 10%
+(Panels # 11632598, Links # 130316434)
+Automatically increasing the refinement parameters
+Delta in refined panel and link count w.r.t. previous iteration less than 10%
+(Panels # 11866491, Links # 238807262)
+Automatically increasing the refinement parameters
+Refinement completed
+Mesh refinement (-m): 5.34755e-06
+***************************************
+Computing the links.. 
+Number of panels after refinement: 12845928
+Number of links to be computed: 461836876
+Done computing links
+***************************************
+Precond Type(s) (-p): Jacobi 
+GMRES It
